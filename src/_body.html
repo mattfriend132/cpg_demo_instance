@@ -1,0 +1,39 @@
+<header class="bar">
+  <div class="wrap">
+    <a class="logo" href="https://fal.ai" aria-label="fal">__LOGO__</a>
+    <div class="crumb"><span class="sl">/</span><span>CPG Studio</span><span class="tag" id="modeTag">Sample mode</span></div>
+    <span class="spacer"></span>
+    <div class="seg" role="group" aria-label="Quality">
+      <button data-act="track" data-v="premium" aria-pressed="true">Best quality</button>
+      <button data-act="track" data-v="budget" aria-pressed="false">Fastest</button>
+    </div>
+    <span class="spend tnum" id="spend" hidden>Session <b>$0.00</b></span>
+    <button class="btn dark" data-act="key" id="keyBtn">Add fal key</button>
+  </div>
+</header>
+
+<section class="band" aria-label="CPG Studio">
+  <canvas id="pix" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="eyebrow">For brand, packaging and content teams</div>
+    <h1>CPG Studio</h1>
+    <p class="lede">Go from one pack sketch to a global campaign: variants, shelf tests, packs localized for every market, lifestyle imagery for every audience and social video. Each step is a production fal API call your team can ship.</p>
+    <div class="piperow" id="pipe"></div>
+    <nav class="tabs" id="tabs" aria-label="Steps"></nav>
+    <div class="subtabs" id="subtabs" hidden></div>
+  </div>
+</section>
+
+<main class="wrap work" id="work">
+  <section class="panel" id="inputPanel" aria-label="Input"></section>
+  <section class="panel" id="resultPanel" aria-label="Result"></section>
+</main>
+<section class="wrap gal" id="gallery" aria-label="More use cases" hidden></section>
+
+<section class="wrap picks" aria-label="Your picks"><div class="pickrow" id="picks"></div></section>
+<section class="wrap sec" id="board" aria-label="Campaign board" hidden></section>
+<section class="wrap sec" id="roi" aria-label="Business case"></section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<input type="file" id="fileIn" accept="image/png,image/jpeg,image/webp" hidden>
+<div id="modalRoot"></div>
