@@ -13,7 +13,8 @@ All brands in the demo are fictional:
 - **It works right away from real samples.** Every sample was generated on fal, and no account is needed.
 - **A fal key makes it live.** With "Add fal key", every step becomes a production fal API call billed to the visitor's account. The key is stored only in their browser.
 - **"Run the full pipeline"** chains the six steps, passing each step's pick into the next. It ends on a campaign board with asset count, time, fal cost and the traditional cost, plus "Download all as zip".
-- **"More use cases"** opens a gallery of six standalone use cases. Most of them pick up the Variants or Audiences pick from the pipeline.
+- **Write your own options** (live mode): Variants take a name plus a color picker; Localize takes a market plus a language. Audiences, video motions, messages, usage scenes, scripts and headlines also accept free text.
+- **"More use cases"** opens its own page with six use case tiles; clicking one highlights it in the selector under the hero, and each starts from your latest Variants or Audiences pick. Most of them pick up the Variants or Audiences pick from the pipeline.
 - **Every step includes:**
   - a model picker with three curated models (two for UGC);
   - a "Compare models" toggle;
