@@ -1,0 +1,1314 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="fal CPG Studio: one pack sketch to a global campaign, running live on fal.">
+<title>fal CPG Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400..750&display=swap">
+<style>
+/* Layout: fal product shell, same as Retail Studio. Sticky top bar, dark brand band with step tabs, then a playground-style Input panel and Result panel. Deliberately single light theme, matching fal's product UI. */
+:root{
+  --bg:#FAFAFA; --surface:#FFFFFF; --surface-2:#F4F4F5; --line:#E4E4E7; --line-2:#D4D4D8;
+  --ink:#121216; --ink-2:#3F3F46; --muted:#71717A;
+  --accent:#5718C0; --accent-hover:#681DE4; --accent-soft:rgba(87,24,192,.07); --accent-mid:rgba(87,24,192,.17);
+  --accent-2:#115EF3; --accent-2-soft:rgba(17,94,243,.08);
+  --ok:#0B7A2A; --ok-soft:rgba(12,219,64,.14); --warn:#8F5A00; --warn-soft:rgba(250,178,25,.2);
+  --dark:#121216; --dark-2:#202022; --dark-line:#2D2D2F; --dark-muted:#A6A6AE;
+  --font:'Public Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--ink);font:14px/1.45 var(--font);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tnum{font-variant-numeric:tabular-nums}
+.wrap{max-width:1280px;margin:0 auto;padding-inline:24px}
+.eyebrow{font-size:10.5px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}
+.ico{width:16px;height:16px;flex:none;display:block}
+
+/* top bar */
+.bar{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
+.bar .wrap{display:flex;align-items:center;gap:14px;min-height:56px;flex-wrap:wrap;padding-block:8px}
+.logo{display:flex;align-items:center;color:var(--ink);text-decoration:none}
+.logo svg{height:21px;width:auto;display:block}
+.crumb{display:flex;align-items:center;gap:10px;font-weight:600;font-size:14px;min-width:0}
+.crumb .sl{color:var(--line-2);font-weight:400}
+.tag{font-size:11px;font-weight:600;border-radius:100px;padding:2px 8px;background:var(--surface-2);color:var(--ink-2)}
+.tag.live{background:var(--ok-soft);color:var(--ok)}
+.spacer{flex:1}
+.seg{display:inline-flex;background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:2px;gap:2px;flex-wrap:wrap}
+.seg button{border:0;background:none;border-radius:4px;padding:5px 11px;font-size:12.5px;font-weight:600;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
+.seg button:disabled{opacity:.42;cursor:not-allowed}
+.spend{font-size:12.5px;color:var(--muted)}
+.spend b{color:var(--ink);font-weight:650}
+.btn{height:36px;padding:0 14px;border-radius:4px;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:13.5px;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;color:var(--ink);text-decoration:none}
+.btn:hover{background:var(--surface-2)}
+.btn.dark{background:var(--dark);border-color:var(--dark);color:#fff}
+.btn.dark:hover{background:var(--dark-2)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:var(--accent-hover)}
+.btn.ghost{border-color:transparent;background:none;color:var(--ink-2)}
+.btn.ghost:hover{background:var(--surface-2)}
+.btn.sm{height:30px;padding:0 10px;font-size:12.5px}
+.btn[disabled]{opacity:.42;cursor:not-allowed}
+.dot{width:7px;height:7px;border-radius:50%;background:#0CDB40;flex:none}
+
+/* brand band */
+.band{background:var(--dark);color:#fff;position:relative;overflow:hidden}
+.band canvas{position:absolute;top:0;right:0;width:58%;height:100%;pointer-events:none;-webkit-mask-image:linear-gradient(to bottom,#000 55%,transparent 88%);mask-image:linear-gradient(to bottom,#000 55%,transparent 88%)}
+.band .wrap{position:relative;padding-top:40px}
+.band .eyebrow{color:var(--dark-muted)}
+.band h1{font-size:44px;line-height:1.04;font-weight:650;letter-spacing:-.03em;margin:10px 0 12px;text-wrap:balance}
+.band p.lede{color:var(--dark-muted);max-width:58ch;margin:0 0 30px;font-size:15.5px}
+.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;margin-inline:-6px;align-items:center}
+.tabs::-webkit-scrollbar{display:none}
+.tab{background:none;border:0;border-bottom:2px solid transparent;color:var(--dark-muted);padding:12px 12px 14px;font-weight:600;font-size:14px;display:flex;gap:9px;align-items:center;white-space:nowrap}
+.tab:hover{color:#fff}
+.tab .n{width:20px;height:20px;border-radius:50%;border:1px solid var(--dark-line);display:grid;place-items:center;font-size:11px;font-weight:650}
+.tab[aria-current="step"]{color:#fff;border-bottom-color:#fff}
+.tab[aria-current="step"] .n{background:#fff;color:var(--dark);border-color:#fff}
+.tab.done .n{background:var(--accent);border-color:var(--accent);color:#fff}
+.tab .n.grid4{border:0;width:auto;height:auto}
+.tabsep{width:1px;height:22px;background:var(--dark-line);margin:0 10px;flex:none}
+.tabgrp{font-size:10.5px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;color:#6E6E76;padding:0 6px;white-space:nowrap}
+.subtabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:0 0 14px;margin-top:-2px}
+.subtabs::-webkit-scrollbar{display:none}
+.subtab{height:30px;padding:0 12px;border-radius:100px;border:1px solid var(--dark-line);background:none;color:var(--dark-muted);font-size:12.5px;font-weight:600;white-space:nowrap;display:inline-flex;align-items:center;gap:7px}
+.subtab:hover{color:#fff;border-color:#4A4A50}
+.subtab[aria-current="page"]{background:#fff;border-color:#fff;color:var(--dark)}
+
+/* workspace */
+.work{display:grid;grid-template-columns:400px minmax(0,1fr);gap:20px;align-items:start;padding-block:24px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:6px;display:flex;flex-direction:column;min-width:0}
+.phead{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:58px}
+.phead h2{font-size:15px;font-weight:650;letter-spacing:-.01em;margin:0;display:flex;align-items:center;gap:10px}
+.intro{padding:16px 18px 0}
+.intro h3{font-size:19px;font-weight:650;letter-spacing:-.018em;margin:4px 0 6px;text-wrap:balance}
+.intro p{margin:0;color:var(--muted);font-size:13px;max-width:52ch}
+.intro .chain{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:11.5px;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:100px;padding:3px 9px}
+.fields{padding:18px;display:flex;flex-direction:column;gap:20px}
+.flabel{font-size:13px;font-weight:600;margin-bottom:9px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.flabel span{font-weight:400;color:var(--muted);font-size:12px}
+.fnote{font-size:12px;color:var(--ink-2);background:var(--surface-2);border-left:3px solid var(--line-2);padding:8px 10px;margin:0}
+.tiles{display:flex;flex-wrap:wrap;gap:8px}
+.tile{width:84px;padding:0;border:1px solid var(--line);border-radius:6px;background:var(--surface);overflow:hidden;text-align:left;display:flex;flex-direction:column}
+.tile:hover{border-color:var(--line-2)}
+.tile .ti{display:block;aspect-ratio:3/4;background:var(--surface-2);overflow:hidden}
+.tile.sq .ti{aspect-ratio:1/1;background:#fff}
+.tile img{width:100%;height:100%;object-fit:cover;display:block}
+.tile.sq img{object-fit:contain;padding:4px}
+.tile .tl{display:block;font-size:11.5px;font-weight:600;padding:5px 7px;color:var(--ink-2);border-top:1px solid var(--line);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile[aria-pressed="true"]{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.tile.add{border-style:dashed;background:none}
+.tile.add .ti{display:grid;place-items:center;background:none;color:var(--muted)}
+.tile.add .tl{border-top-style:dashed;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{min-height:30px;padding:4px 12px;border:1px solid var(--line);border-radius:100px;background:var(--surface);font-size:12.5px;display:inline-flex;align-items:center;gap:7px;color:var(--ink-2);text-align:left}
+.chip:hover{border-color:var(--line-2)}
+.chip .sw{width:14px;height:14px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.14);flex:none}
+.chip small{color:var(--muted);font-size:11.5px}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.chip[aria-pressed="true"] small{color:var(--dark-muted)}
+.txt,.addrow input{border:1px solid var(--line);border-radius:4px;background:var(--surface);padding:8px 10px;font-size:13px;width:100%;min-width:0}
+.addrow{display:flex;gap:6px;margin-top:10px}
+.adv{border-top:1px solid var(--line)}
+.adv summary{list-style:none;padding:13px 18px;font-size:13px;font-weight:600;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.adv summary::-webkit-details-marker{display:none}
+.adv summary .chev{transition:transform .15s;color:var(--muted)}
+.adv[open] summary .chev{transform:rotate(180deg)}
+.adv .inner{padding:0 18px 18px;display:flex;flex-direction:column;gap:14px}
+.ctl{display:flex;flex-direction:column;gap:6px}
+.ctl label{font-size:12px;font-weight:600;color:var(--ink-2)}
+.ctl select,.ctl textarea,.modal input{border:1px solid var(--line);border-radius:4px;background:var(--surface);padding:8px 10px;font-size:13px;width:100%}
+.ctl textarea{min-height:120px;resize:vertical;line-height:1.5}
+.ctl .hint{font-size:11.5px;color:var(--muted)}
+.mrow{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap}
+.mrow select{flex:1 1 220px;min-width:0;height:36px;border:1px solid var(--line);border-radius:4px;background:var(--surface);padding:0 10px;font-size:13px;font-weight:600;color:var(--ink)}
+.mrow select:disabled{color:var(--muted);background:var(--surface-2)}
+.cmpbtn{height:36px;padding:0 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);font-size:12.5px;font-weight:600;color:var(--ink-2);display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.cmpbtn i{width:28px;height:16px;border-radius:100px;background:var(--line-2);position:relative;transition:background .15s;flex:0 0 auto}
+.cmpbtn i::after{content:"";position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:#fff;transition:transform .15s}
+.cmpbtn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+.cmpbtn[aria-pressed="true"] i{background:var(--accent)}
+.cmpbtn[aria-pressed="true"] i::after{transform:translateX(12px)}
+.cmpbtn:disabled{opacity:.45;cursor:not-allowed}
+@media (prefers-reduced-motion:reduce){.cmpbtn i,.cmpbtn i::after{transition:none}}
+.pfoot{padding:14px 18px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.est{font-size:12.5px;color:var(--muted)}
+.est b{color:var(--ink);font-weight:650}
+
+/* result */
+.badge{font-size:11.5px;font-weight:600;border-radius:100px;padding:2px 9px;background:var(--surface-2);color:var(--ink-2)}
+.badge.run{background:var(--accent-2-soft);color:var(--accent-2)}
+.badge.ok{background:var(--ok-soft);color:var(--ok)}
+.badge.err{background:var(--warn-soft);color:var(--warn)}
+.rbody{padding:18px;min-height:420px}
+.note{font-size:12.5px;color:var(--ink-2);background:var(--accent-soft);border-left:3px solid var(--accent);padding:10px 12px;margin:0 0 16px;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.note button{border:0;background:none;color:var(--accent);font-weight:650;font-size:12.5px;padding:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;align-items:end}
+.grid.wide{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.card{position:relative;border-radius:6px;min-width:0}
+.card[data-act="pick"]{cursor:pointer}
+.card .im{aspect-ratio:var(--ar,3/4);border-radius:6px;overflow:hidden;background:var(--surface-2);border:1px solid var(--line);position:relative;max-width:100%}
+.card .im img{width:100%;height:100%;object-fit:cover;display:block}
+.card .im model-viewer{width:100%;height:100%;display:block;background:#fff;--poster-color:#fff}
+.card.on .im{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.card .ck{position:absolute;top:8px;left:8px;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:none;place-items:center;z-index:2}
+.card.on .ck{display:grid}
+.card .dlb{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:4px;background:rgba(255,255,255,.94);border:1px solid var(--line);display:grid;place-items:center;opacity:0;transition:opacity .15s;color:var(--ink);z-index:2}
+.card:hover .dlb,.card:focus-within .dlb{opacity:1}
+@media (hover:none){.card .dlb{opacity:1}}
+.card .cn{font-size:13px;font-weight:600;margin-top:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .lab{font-size:12px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .cm{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:8px;margin-top:1px}
+.card .cm b{color:var(--ink);font-weight:600}
+.card .state{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:14px;font-size:12px;color:var(--muted)}
+.card .state b{display:block;color:var(--ink-2);font-size:12.5px;margin-bottom:2px}
+.card.busy .im::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(87,24,192,.08) 50%,transparent 70%);animation:sh 1.3s linear infinite}
+@keyframes sh{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.card.fail .im{background:var(--warn-soft);border-color:transparent}
+.card.fail .state{color:var(--warn)}
+.card .vtag{position:absolute;bottom:8px;left:8px;font-size:10.5px;font-weight:650;letter-spacing:.06em;text-transform:uppercase;background:rgba(18,18,22,.72);color:#fff;border-radius:100px;padding:3px 8px;pointer-events:none}
+.card video{width:100%;height:100%;object-fit:cover;display:block;background:#000}
+.card .snd{position:absolute;bottom:8px;right:8px;height:26px;padding:0 9px;border-radius:100px;border:0;background:rgba(18,18,22,.72);color:#fff;font-size:11px;font-weight:650;z-index:2}
+.empty{border:1px dashed var(--line-2);border-radius:6px;min-height:380px;display:grid;place-items:center;text-align:center;padding:24px;color:var(--muted)}
+.empty b{display:block;color:var(--ink);font-size:15px;margin-bottom:4px}
+.code{font-family:var(--font);font-size:12.5px;line-height:1.6;background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:16px;white-space:pre-wrap;word-break:break-word;margin:0;color:var(--ink-2);font-variant-numeric:tabular-nums;max-height:560px;overflow:auto}
+.codebar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:10px;flex-wrap:wrap}
+.rfoot{padding:14px 18px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.rfoot .acts{display:flex;gap:8px;flex-wrap:wrap}
+
+/* gallery of other use cases */
+.gal{padding-block:24px}
+.galhead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.galhead h2{font-size:24px;font-weight:650;letter-spacing:-.02em;margin:6px 0 4px}
+.galhead p{margin:0;color:var(--muted);max-width:66ch}
+.ggrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.gcard{background:var(--surface);border:1px solid var(--line);border-radius:6px;overflow:hidden;display:flex;flex-direction:column;text-align:left;padding:0;color:inherit}
+.gcard:hover{border-color:var(--line-2)}
+.gcard .gi{aspect-ratio:16/10;background:var(--surface-2);overflow:hidden;position:relative;border-bottom:1px solid var(--line)}
+.gcard .gi img,.gcard .gi video{width:100%;height:100%;object-fit:cover;display:block}
+.gcard .gb{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.gcard h3{margin:0;font-size:15.5px;font-weight:650;letter-spacing:-.01em}
+.gcard p{margin:0;color:var(--muted);font-size:13px}
+.gcard .gm{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:auto;padding-top:8px;font-size:12px;color:var(--muted)}
+.gcard .gm b{color:var(--accent);font-weight:650;display:inline-flex;align-items:center;gap:6px}
+
+/* picks */
+.picks{padding-bottom:40px}
+.pickrow{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.pk{display:flex;align-items:center;gap:8px;min-width:0}
+.pk img{width:40px;height:50px;object-fit:cover;border-radius:4px;border:1px solid var(--line);background:var(--surface-2)}
+.pk span{font-size:12px;color:var(--muted);line-height:1.25}
+.pk span b{display:block;color:var(--ink);font-size:12.5px}
+.pk.slot{opacity:.45}
+.pk.slot i{width:40px;height:50px;border-radius:4px;border:1px dashed var(--line-2);display:block}
+
+/* modal + toast */
+.scrim{position:fixed;inset:0;background:rgba(18,18,22,.5);display:grid;place-items:center;padding:16px;z-index:50}
+.modal{background:var(--surface);border-radius:6px;width:min(460px,100%);padding:24px;display:flex;flex-direction:column;gap:14px;border:1px solid var(--line)}
+.modal h2{margin:0;font-size:19px;font-weight:650;letter-spacing:-.015em}
+.modal p{margin:0;color:var(--ink-2);font-size:13.5px}
+.modal a{color:var(--accent);font-weight:600}
+.modal .fine{font-size:12px;color:var(--muted);border-left:3px solid var(--line-2);padding-left:10px}
+.modal .row{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.modal .err{color:var(--warn);font-size:12px;min-height:16px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 14px;border-radius:4px;font-size:13px;z-index:60;max-width:calc(100% - 32px)}
+
+/* pipeline row in band */
+.piperow{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:0 0 26px}
+.btn.light{background:#fff;border-color:#fff;color:var(--ink)}
+.btn.light:hover{background:#ECECEF}
+.btn.light[disabled]{opacity:.85}
+.btn.outl{background:none;border-color:#4A4A50;color:#fff}
+.btn.outl:hover{background:var(--dark-2)}
+.pipemeta{color:var(--dark-muted);font-size:13px}
+.pipemeta b{color:#fff;font-weight:600}
+.spin{width:14px;height:14px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:rot .8s linear infinite;display:inline-block}
+@keyframes rot{to{transform:rotate(360deg)}}
+.chip:disabled,.tile:disabled{opacity:.42;cursor:not-allowed}
+.chip .lv,.tile .lv{font-size:10px;font-weight:650;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-left:2px}
+.addrow input:disabled,.txt:disabled{background:var(--surface-2);cursor:not-allowed}
+/* today vs fal strip */
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-top:18px}
+.cmp>div{background:var(--surface);padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.cmp>div.fal{background:var(--accent-soft)}
+.cmp b{font-size:15px;font-weight:650;letter-spacing:-.01em}
+.cmp small{font-size:12px;color:var(--muted)}
+/* board + roi */
+.sec{padding-bottom:28px}
+.sechead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.sechead h2{font-size:24px;font-weight:650;letter-spacing:-.02em;margin:6px 0 0}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-bottom:18px}
+.stats>div{background:var(--surface);padding:14px 16px;min-width:0}
+.stats>div.hl{background:var(--dark);color:#fff}
+.stats>div.hl .eyebrow{color:var(--dark-muted)}
+.stats b{display:block;font-size:24px;font-weight:600;letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin-top:4px}
+.stats small{font-size:12px;color:var(--muted)}
+.stats>div.hl small{color:var(--dark-muted)}
+.boardrow{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:14px 16px;margin-bottom:10px}
+.boardrow h3{font-size:13px;font-weight:650;margin:0 0 10px;display:flex;gap:8px;align-items:baseline}
+.boardrow h3 span{font-weight:400;color:var(--muted);font-size:12px}
+.bgrid{display:flex;gap:10px;overflow-x:auto;padding-bottom:2px}
+.bgrid .bthumb{flex:0 0 auto;border:1px solid var(--line);border-radius:4px;background:var(--surface-2);overflow:hidden;position:relative}
+.bgrid .bthumb.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.bgrid img,.bgrid video{height:150px;width:auto;display:block}
+.roi{background:var(--surface);border:1px solid var(--line);border-radius:6px;display:grid;grid-template-columns:320px minmax(0,1fr);overflow:hidden}
+.roi .in{padding:18px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:14px}
+.roi label{font-size:12.5px;font-weight:600;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.roi input{width:96px;border:1px solid var(--line);border-radius:4px;padding:6px 8px;font-size:13px;text-align:right;font-variant-numeric:tabular-nums}
+.roi .out{padding:18px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.roi .big{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.roi .big div{min-width:0}
+.roi .big b{display:block;font-size:26px;font-weight:600;letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin-top:4px}
+.roi .big .fal b{color:var(--accent)}
+.roi .fine{font-size:11.5px;color:var(--muted);margin:0}
+.roi .fine a{color:var(--muted)}
+@media (max-width:1000px){.roi{grid-template-columns:1fr}.roi .in{border-right:0;border-bottom:1px solid var(--line)}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.ggrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.roi .big{grid-template-columns:1fr}.cmp{grid-template-columns:1fr}.ggrid{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}.card.busy .im::after{animation:none}.adv summary .chev{transition:none}}
+@media (max-width:1000px){.work{grid-template-columns:1fr}.band canvas{width:80%;opacity:.55}}
+@media (max-width:640px){
+  .wrap{padding-inline:16px}
+  .band .wrap{padding-top:28px}
+  .band h1{font-size:32px}
+  .band p.lede{font-size:14.5px;margin-bottom:20px}
+  .spend{display:none}
+  .grid,.grid.wide{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .tile{width:76px}
+}
+
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <a class="logo" href="https://fal.ai" aria-label="fal"><svg viewBox="0 0 2105 896" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2060 153.532V744.596C2060 838.366 2058.95 842.58 2047.37 842.58H1904.23C1892.66 842.58 1890.55 838.366 1890.55 744.596V153.532C1890.55 59.7625 1892.66 55.5481 1904.23 55.5481H2047.37C2058.95 55.5481 2060 59.7625 2060 153.532Z" fill="currentColor"/><path d="M1658.67 499.101V476.975C1658.67 424.296 1634.47 403.224 1592.37 403.224C1551.32 403.224 1529.22 425.349 1522.9 464.332C1520.8 475.922 1521.85 485.404 1515.54 485.404H1373.45C1365.03 485.404 1365.03 483.297 1365.03 475.922C1365.03 420.081 1417.66 304.186 1600.79 304.186C1730.24 304.186 1822.86 355.812 1822.86 499.101V709.819C1822.86 758.284 1849.17 826.767 1849.17 836.25C1849.17 840.464 1846.02 842.571 1842.86 842.571H1684.99C1677.62 842.571 1676.57 838.357 1671.3 812.017L1667.09 791.999C1663.94 776.195 1661.83 770.927 1655.52 770.927C1647.1 770.927 1641.84 789.892 1618.68 812.017C1593.42 835.196 1562.9 851 1510.28 851C1425.02 851 1348.19 802.535 1348.19 697.176C1348.19 579.174 1439.76 528.601 1575.53 523.333C1646.05 520.172 1658.67 527.548 1658.67 499.101ZM1658.67 651.871V630.799C1658.67 609.728 1653.41 603.406 1635.52 604.46L1596.58 606.567C1547.11 609.728 1517.64 635.014 1517.64 682.425C1517.64 728.783 1542.9 751.962 1579.74 751.962C1620.79 751.962 1658.67 714.033 1658.67 651.871Z" fill="currentColor"/><path d="M1061.75 442.204C1061.75 422.186 1053.33 420.078 1014.39 420.078H995.445C988.078 420.078 987.025 414.81 987.025 371.613V364.238C987.025 321.041 988.078 316.826 995.445 316.826H1017.55C1056.49 316.826 1061.75 313.666 1061.75 294.701V229.378C1061.75 106.108 1123.85 45 1243.83 45C1291.19 45 1323.82 52.3751 1329.08 55.5359C1331.19 57.643 1331.19 60.8039 1331.19 99.7867V113.483C1331.19 153.52 1331.19 163.002 1328.03 163.002C1324.87 163.002 1310.14 153.52 1284.88 153.52C1251.2 153.52 1230.15 170.377 1230.15 229.378V294.701C1230.15 313.666 1237.52 316.826 1284.88 316.826H1332.24C1341.71 316.826 1341.71 321.041 1341.71 364.238V371.613C1341.71 414.81 1340.66 420.078 1333.29 420.078H1284.88C1237.52 420.078 1230.15 422.186 1230.15 442.204V744.584C1230.15 838.354 1226.99 842.568 1218.57 842.568H1072.28C1063.86 842.568 1061.75 838.354 1061.75 744.584V442.204Z" fill="currentColor"/><path fill-rule="evenodd" clip-rule="evenodd" d="M551.393 57.4319C564.998 57.4319 575.901 68.4935 577.202 82.0348C588.803 202.821 684.934 298.945 805.729 310.545C819.271 311.846 830.333 322.749 830.333 336.352V563.792C830.333 577.395 819.271 588.298 805.729 589.599C684.934 601.199 588.803 697.323 577.202 818.109C575.901 831.651 564.998 842.712 551.393 842.712H323.94C310.336 842.712 299.432 831.651 298.132 818.109C286.531 697.323 190.399 601.199 69.6046 589.599C56.0623 588.298 45 577.395 45 563.792V336.352C45 322.749 56.0624 311.846 69.6046 310.545C190.399 298.945 286.531 202.821 298.132 82.0348C299.432 68.4935 310.336 57.4319 323.94 57.4319H551.393ZM202.68 449.407C202.68 580.065 308.487 685.983 439.007 685.983C569.527 685.983 675.334 580.065 675.334 449.407C675.334 318.75 569.527 212.83 439.007 212.83C308.487 212.83 202.68 318.75 202.68 449.407Z" fill="currentColor"/></svg></a>
+    <div class="crumb"><span class="sl">/</span><span>CPG Studio</span><span class="tag" id="modeTag">Sample mode</span></div>
+    <span class="spacer"></span>
+    <div class="seg" role="group" aria-label="Quality">
+      <button data-act="track" data-v="premium" aria-pressed="true">Best quality</button>
+      <button data-act="track" data-v="budget" aria-pressed="false">Fastest</button>
+    </div>
+    <span class="spend tnum" id="spend" hidden>Session <b>$0.00</b></span>
+    <button class="btn dark" data-act="key" id="keyBtn">Add fal key</button>
+  </div>
+</header>
+
+<section class="band" aria-label="CPG Studio">
+  <canvas id="pix" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="eyebrow">For brand, packaging and content teams</div>
+    <h1>CPG Studio</h1>
+    <p class="lede">Go from one pack sketch to a global campaign: variants, shelf tests, packs localized for every market, lifestyle imagery for every audience and social video. Each step is a production fal API call your team can ship.</p>
+    <div class="piperow" id="pipe"></div>
+    <nav class="tabs" id="tabs" aria-label="Steps"></nav>
+    <div class="subtabs" id="subtabs" hidden></div>
+  </div>
+</section>
+
+<main class="wrap work" id="work">
+  <section class="panel" id="inputPanel" aria-label="Input"></section>
+  <section class="panel" id="resultPanel" aria-label="Result"></section>
+</main>
+<section class="wrap gal" id="gallery" aria-label="More use cases" hidden></section>
+
+<section class="wrap picks" aria-label="Your picks"><div class="pickrow" id="picks"></div></section>
+<section class="wrap sec" id="board" aria-label="Campaign board" hidden></section>
+<section class="wrap sec" id="roi" aria-label="Business case"></section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<input type="file" id="fileIn" accept="image/png,image/jpeg,image/webp" hidden>
+<div id="modalRoot"></div>
+
+<script>
+(function(){
+/* ---------- sample media, all generated on fal ---------- */
+const FB="https://v3b.fal.media/files/b/";
+const U=p=>FB+p;
+/* concept step: three sketches and a render per sketch per design direction */
+const IMG={
+ sk_can:U("0aad9648/McfQv2Lf9sSCTDvRph4xy_cOrwFhLs.jpg"),
+ sk_box:U("0aad9648/uq8LLI27IN6zOfjLQiYRY_s3Xu3ekz.jpg"),
+ sk_bottle:U("0aad9648/jymT7gUKJb9nNahELaAaL_iMvq2giY.jpg"),
+ can_bold:U("0aad9650/AkOPwop5O_mYTUttAWbvH_QSEy10dy.jpg"),
+ can_minimal:U("0aad964e/uO8S3Da8q8a4f_1e0VQW6_O0KqcfME.jpg"),
+ can_natural:U("0aad964e/t-Q6eBhZCoP68mgNSrzME_A6e0i46Y.jpg"),
+ can_retro:U("0aad964e/JBfgeANjZug31fizXBntU_QvImaa0L.jpg"),
+ box_bold:U("0aad964e/pst5ZdIpQiyrkTnN1hUo7_gQfyRKde.jpg"),
+ box_minimal:U("0aad964e/AISLVIJfVas35qIjIg9p3_3f3DtLSd.jpg"),
+ box_natural:U("0aad964e/FI3QS_mdQwObWOgibksXb_IMPzQMuB.jpg"),
+ box_retro:U("0aad964e/XSnp8SBBq2hp64PaNvd7l_IKKU7Vtj.jpg"),
+ bottle_bold:U("0aad9650/sdsQLRtB68V2DSCNgT3h-_wRY4Nwj1.jpg"),
+ bottle_minimal:U("0aad9650/eTKmlKWTi9DjOAOy6fYZo_RMNnQRWe.jpg"),
+ bottle_natural:U("0aad9650/M6Ad3RlASAxWMIVJYszHI_1zcLoplp.jpg"),
+ bottle_retro:U("0aad9650/1brhkUhYtor51AQch_saN_zVRmlMkh.jpg")
+};
+const M=o=>{const r={};for(const k in o)r[k]=U(o[k]);return r};
+/* one sample chain per sketch: each step's samples were generated from the previous step's default pick */
+const SAMP={
+ can:{market:"Mexico",
+  base:{variants:IMG.can_bold,shelf:U("0aad9657/0f5zOSt2xbOcL6XbrSfYF_ob1aWmVz.jpg"),localize:U("0aad9657/0f5zOSt2xbOcL6XbrSfYF_ob1aWmVz.jpg"),personal:U("0aad9657/0f5zOSt2xbOcL6XbrSfYF_ob1aWmVz.jpg"),usage:U("0aad9657/0f5zOSt2xbOcL6XbrSfYF_ob1aWmVz.jpg"),m3d:U("0aad9657/0f5zOSt2xbOcL6XbrSfYF_ob1aWmVz.jpg"),audiences:U("0aad9668/Nr3ARPOwZ-9jCmP9nRr3B_oAVPvcOj.jpg"),video:U("0aad968b/Thzfao6E4XHQwayHgokcZ_ZlXrXOET.jpg"),ooh:U("0aad968b/Thzfao6E4XHQwayHgokcZ_ZlXrXOET.jpg"),ab:U("0aad968b/Thzfao6E4XHQwayHgokcZ_ZlXrXOET.jpg")},
+  pref:{concept:"bold",variants:"grapefruit",shelf:"shelf",localize:"mx",audiences:"festive",video:"push"},
+  steps:{
+   variants:M({lime:"0aad9657/WM23j4s9UsO68vyefEsAH_htFlQFPc.jpg",grapefruit:"0aad9657/0f5zOSt2xbOcL6XbrSfYF_ob1aWmVz.jpg",blackberry:"0aad9657/YETVAMwy5huy0fnm7xQeC_x1bGQkCH.jpg",mango:"0aad9657/dByuZMInvZlTc6vvar3sY_5oWZLCp2.jpg",cucumber:"0aad9657/ElunJE3X-DoXo2KJ_CSjh_7gjiQl7z.jpg"}),
+   shelf:M({shelf:"0aad9665/wpULmN6jfbO1rdkdZ7WxM_x8Wa2mpq.jpg",cooler:"0aad968b/y26EiqExN35T0GDz0LC9Y_QxShNz9T.jpg",endcap:"0aad968b/Gx_dOuH-tc0YDVwHpmBzg_LPeNfKFi.jpg",ecom:"0aad9665/kbli8M0L98pVMPh4umIvc_JDNUcF5J.jpg",hand:"0aad9665/hNiMdFScw4XPap918RnlN_oRo6gsBb.jpg"}),
+   localize:M({jp:"0aad9667/DJRYMS7Y10_eTHttUbTbF_L96vLV6A.jpg",mx:"0aad9668/Nr3ARPOwZ-9jCmP9nRr3B_oAVPvcOj.jpg",br:"0aad9668/ehDdulcJNXc5fdlaPcAbI_dgTYODn6.jpg",fr:"0aad9668/V6h_4DZpaX1KHuqP_fqCA_abE4KSaA.jpg",kr:"0aad98f9/R1w09UMD-5BbV8QUiB5_7_Ng6BS7uI.jpg",sa:"0aad9667/5zQF7cOGjCVJUhQMGGe8n_bIP3w3UJ.jpg"}),
+   audiences:M({genz:"0aad96a2/YjhncGVMvWXkaeQOIza9A_HsfUfZpG.jpg",family:"0aad968b/wRj8w2M8c-ERLcJvUikeF_Tl3m59Xe.jpg",fitness:"0aad968b/TX7frxW2LpyF8nDJKFh4G_njMdsPpa.jpg",festive:"0aad968b/Thzfao6E4XHQwayHgokcZ_ZlXrXOET.jpg"}),
+   video:M({push:"0aad96a1/uq45x6GNpzLhtRNetANNI_minimax-h3.mp4",pickup:"0aad96a1/wnr9vKn-m7A92wFQkIzos_minimax-h3.mp4",orbit:"0aad96a1/CulmSuTn_5paq-yB4QL2J_minimax-h3.mp4"}),
+   personal:M({maya:"0aad9666/bx4fcWhUTjT3sSiRQbaQ6_oT3E6yOF.jpg",kenji:"0aad9666/S54KZbmjCdKCtPQ_YlLWn_5OdLXY7v.jpg",sofia:"0aad9666/jAP7ieh9OctzILNhcza2d_S3FZEuoy.jpg",aarav:"0aad9668/IW5pDYeent4XFgClMfN7x_24BrJ2CZ.jpg"}),
+   usage:M({mocktail:"0aad9666/6L5e0oP6mu8AsP3Xw1XA4_0GCkHJFz.jpg",brunch:"0aad9666/_eRsDq2GymvESJxaq4VlX_DV6uAo1T.jpg",flatlay:"0aad9666/NLpV-3sv8oWE5wBUbN38k_55c3FVqu.jpg",picnic:"0aad9666/FXNYUKcFh1EGzY-oAJequ_mt29pf2r.jpg"}),
+   ooh:M({billboard:"0aad96a3/NXbFNn0juUz9kdTnP_F-K_wjhhwwrH.jpg",shelter:"0aad96a2/u5r-r5oEMZHqwzScZPADO_8seETX7z.jpg",subway:"0aad96a3/KbU4zCr_8kT-JDNGY8zs7_IFosTPoi.jpg"}),
+   ab:M({h1:"0aad96a2/iSU-2WuzOGx9H7sxZtKmj_smlHVUOq.jpg",h2:"0aad96a2/lDhkGWqv3sHhjBg8jrfHd_5eLPnqfp.jpg",h3:"0aad96a3/_gz3hftqD4luVshkYG73f_f6IhBHfs.jpg",h4:"0aad96a3/dohbUw-fMHQDFq54EhIWb_RaZ8r1vn.jpg"})
+  },
+  glb:{hun:{url:U("0aad9678/p9HPUaFU7MWN9DNINXHms_model.glb"),poster:U("0aad9679/j0w3z5u2lpDrdY6pDiwFo_preview.png"),secs:162},
+   trellis:{url:U("0aad9682/Od3SP_oXafapZG7r-ZfZy_trellis2_1fca035cc38749dcb0dc8c32eef1bb18.glb"),poster:null,secs:253},
+   tripo:{url:U("0aad967c/zS_GlyNhAcOcU2SQI8D05_model.glb"),poster:U("0aad967d/PfAgcwMcl0ap0e4-1hzdA_preview.png"),secs:207}},
+  creators:[{id:"kitchen",name:"Kitchen creator",img:U("0aad9668/JbH-2mHNwqpj5H96mQyHY_p6Q62ixM.jpg")},{id:"gym",name:"Gym creator",img:U("0aad9668/luCp9fPDqmH25H7M3lvs1_lW9aGt0D.jpg")}],
+  ugc:M({kitchen_taste:"0aad96a6/k2j-c_ILyYE_vjWyEzfHB_c00951b239fc4d2bb2fdcc300f7bfa61.mp4",gym_gym:"0aad96a7/y3MTUjTtQuac2E3-YqejX_6c1db6164a6b4835a09bdeeaa99b335b.mp4"})
+ },
+ box:{market:"Japan",
+  base:{variants:IMG.box_bold,shelf:U("0aad98f8/T9G7miXjqeuiS-L4s47YK_65fNl429.jpg"),localize:U("0aad98f8/T9G7miXjqeuiS-L4s47YK_65fNl429.jpg"),personal:U("0aad98f8/T9G7miXjqeuiS-L4s47YK_65fNl429.jpg"),usage:U("0aad98f8/T9G7miXjqeuiS-L4s47YK_65fNl429.jpg"),m3d:U("0aad98f8/T9G7miXjqeuiS-L4s47YK_65fNl429.jpg"),audiences:U("0aad9902/3XXBE32DzoQ9HF8ezdW9w_AKg6VIQx.jpg"),video:U("0aad9922/ZXstdfEXWjkFHZQtGJdid_yjTbgDb9.jpg"),ooh:U("0aad9922/ZXstdfEXWjkFHZQtGJdid_yjTbgDb9.jpg"),ab:U("0aad9922/ZXstdfEXWjkFHZQtGJdid_yjTbgDb9.jpg")},
+  pref:{concept:"bold",variants:"strawberry",shelf:"shelf",localize:"jp",audiences:"family",video:"pour"},
+  steps:{
+   variants:M({strawberry:"0aad98f8/T9G7miXjqeuiS-L4s47YK_65fNl429.jpg",cocoa:"0aad98f8/7nlAXsRuBwDZBFSNCwU9B_3BA1JsQP.jpg",blueberry:"0aad98f8/OzASVijOaT_rQ2lWl2jeX_hu853ZVx.jpg",maple:"0aad98f8/qdlBLLHvS1jiMnsIufZYk_MXk6LtAZ.jpg"}),
+   shelf:M({shelf:"0aad9902/NDOLxF3YXOYAvYzrYiTKo_soSZZCHX.jpg",endcap:"0aad9902/ievux9Yq_I9X9khTTE-p4_oZtWdFP8.jpg",club:"0aad9902/qmTHe-3TZFIr8EQtSbAon_zQ72u05T.jpg",ecom:"0aad9902/a8oA0Ol7RsRaXsXo8tzho_6CekslJf.jpg",hand:"0aad9902/8iYvBDOmrP6Rzx2Ok5A2__xb8w7Apz.jpg"}),
+   localize:M({jp:"0aad9902/3XXBE32DzoQ9HF8ezdW9w_AKg6VIQx.jpg",mx:"0aad9905/oCuCk7fPGi_vCjHFlqGm1_pfGygg6i.jpg",br:"0aad9905/_kWr3o2yVI9TcKPgHYB-z_Q10O7XnY.jpg",fr:"0aad9905/F2h7eViQXtm1HFK2JHaqD_SmqW8kZh.jpg",kr:"0aad9905/bfrDS89ucPs1qi9yRw0c6_iPDpNMAV.jpg",sa:"0aad9905/yNH37Se574jxoSK6oA4Ml_JmyfkVsI.jpg"}),
+   audiences:M({family:"0aad9922/ZXstdfEXWjkFHZQtGJdid_yjTbgDb9.jpg",dorm:"0aad9922/5WkJwEZvVb0mDYavxXwzn_HHtm1V8w.jpg",fitness:"0aad9922/uVY_udHDw6IFIahEO_IwL_3nlazykq.jpg",brunch:"0aad9922/TYgh7vRwmxRgpDvl9vD1k_lN1DIy86.jpg"}),
+   video:M({push:"0aad9927/qyQTk_25rurMtbovf6Kof_minimax-h3.mp4",pour:"0aad9927/EggiKnf6TckAKDKhEcUnT_minimax-h3.mp4",orbit:"0aad9927/SjqcXmVJX-q1E6WyhEEFs_minimax-h3.mp4"}),
+   personal:M({maya:"0aad9905/CYguKyTjRWA5cCrb8MDU4_9Sc3eg5d.jpg",kenji:"0aad9905/ZpN4td7oVfpBF8Yfc7A0i_gxIZwNio.jpg",sofia:"0aad9905/k6E3_0d1-aGo0oE8YQEwW_OV6YQVoU.jpg",aarav:"0aad9905/4wEwYblckpqfeVck9dlUC_CdLer6U4.jpg"}),
+   usage:M({bowl:"0aad9906/cneZ_UGLwGOJ4ICfHNAYK_UuQ8SSDT.jpg",bars:"0aad9906/ryaUnxEhtDJGlFHMNP2s4_i7PorIOV.jpg",flatlay:"0aad9906/jWqTje1IYltJ00yfAPS-D_iasuKq1i.jpg",lunch:"0aad9906/G_8zDjUEumSAQgRDOaoi3_0sv4OCRt.jpg"}),
+   ooh:M({billboard:"0aad9927/8j49nz2ksBVzcaYzAEypy_Rwcw2BhY.png",shelter:"0aad9927/Qi4D3V7RYDt0DB4fe-G-A_LJya03qj.png",subway:"0aad9927/0MtlAQVcpZY4YdD8lWYRu_hVikpzqO.png"}),
+   ab:M({h1:"0aad9927/s1Ie2WF6XMCNihb2NdpkX_h1CbVxCQ.png",h2:"0aad9927/ht41dOc6Aa6IJL2uWcr8O_AauQZKQ9.png",h3:"0aad9928/nqHSMcUDjoKAF2gokxUny_gq7M6WsN.png",h4:"0aad9929/QRh8ZTXcmF9Ef_38wUaYW_djIuAhIz.png"})
+  },
+  glb:{hun:{url:U("0aad9910/lkhO7G6peIfHD3uPKZV8Q_model.glb"),poster:U("0aad9911/NoRMbnP9HBgZByw6hxFz1_preview.png"),secs:148}},
+  creators:[{id:"breakfast",name:"Kitchen creator",img:U("0aad9902/J17awT62V5cyh1ccNNzHL_94Uw00OT.jpg")}],
+  ugc:M({breakfast_routine:"0aad9928/REkWvsT9HP0NP7SEsQ9DK_eb51d0dfae4342089ad87e006a56fa1c.mp4"})
+ },
+ bottle:{market:"Brazil",
+  base:{variants:IMG.bottle_bold,shelf:U("0aad98f8/Ay6II1CzVwM-OLA4qaORf_I8vCCfGa.jpg"),localize:U("0aad98f8/Ay6II1CzVwM-OLA4qaORf_I8vCCfGa.jpg"),personal:U("0aad98f8/Ay6II1CzVwM-OLA4qaORf_I8vCCfGa.jpg"),usage:U("0aad98f8/Ay6II1CzVwM-OLA4qaORf_I8vCCfGa.jpg"),m3d:U("0aad98f8/Ay6II1CzVwM-OLA4qaORf_I8vCCfGa.jpg"),audiences:U("0aad9904/wwS2hhQUH-__rmfEXhUtq_Ip8QNLfZ.jpg"),video:U("0aad9923/3FZnb-gmv_xILnZnOTLh5_Stmx2cuH.jpg"),ooh:U("0aad9923/3FZnb-gmv_xILnZnOTLh5_Stmx2cuH.jpg"),ab:U("0aad9923/3FZnb-gmv_xILnZnOTLh5_Stmx2cuH.jpg")},
+  pref:{concept:"bold",variants:"lavender",shelf:"shelf",localize:"br",audiences:"parents",video:"cap"},
+  steps:{
+   variants:M({lavender:"0aad98f8/Ay6II1CzVwM-OLA4qaORf_I8vCCfGa.jpg",linen:"0aad98f8/NdH1nQd6wcq7Lo6iL-xOn_1L0My2yz.jpg",citrus:"0aad98f8/jZgboUdiFW6ObRqjqI_Dr_1uOS4ZiR.jpg",sensitive:"0aad98f8/LBRZhUGJsrfZUSmwDlj80_fs5lHE2z.jpg"}),
+   shelf:M({shelf:"0aad9904/5EMwK0zki-CDu5BWXAqSB_JqTxlGwE.jpg",endcap:"0aad9904/qFjLxRRuDHxtakWQo-_gK_I3JDWtSE.jpg",club:"0aad9904/Cc2RaBPNg0hWtktvhBRg2_R5sV9rli.jpg",ecom:"0aad9904/x5BruD2bep_xb1Fr23XUJ_BPHYBrmM.jpg",hand:"0aad9904/RTn91UyQcUJOWtZo0DlaC_RZyZX76q.jpg"}),
+   localize:M({jp:"0aad9904/ocixQBnVZNpYByRnj4zMI_s5E5OLbk.jpg",mx:"0aad9904/opDPDoNLYQnpGvU0sPON7_lXElFEaA.jpg",br:"0aad9904/wwS2hhQUH-__rmfEXhUtq_Ip8QNLfZ.jpg",fr:"0aad9906/189eGgOQf4eNV4xmx2nvg_pEKlQdKk.jpg",kr:"0aad9906/mYl6Y6EfhR-gXiSBdDZK__0Wfz3Aba.jpg",sa:"0aad9907/XzZ0AoTvg0bJ9_5sdGkas_5LAlAgG7.jpg"}),
+   audiences:M({parents:"0aad9923/3FZnb-gmv_xILnZnOTLh5_Stmx2cuH.jpg",firstapt:"0aad9923/4udV1sDw0O354VpQNB0Ns_607gnV7r.jpg",eco:"0aad9923/R6BL3YJyI3RbskwkXncRN_atr7p01k.jpg",pets:"0aad9923/h0S_s7bkJ3gzIETuCxCvf_2WaRxUMK.jpg"}),
+   video:M({push:"0aad9929/oUswdCR4AqtzgnboaG7Bw_minimax-h3.mp4",cap:"0aad9928/rCZP0AalmSMH0lej3blhI_minimax-h3.mp4",basket:"0aad9929/KHqOwNpB5cYLOq_TkpJMl_minimax-h3.mp4"}),
+   personal:M({maya:"0aad9908/nMQ83wRN6EgFuOXLMPiQn_DZpH4yjn.jpg",kenji:"0aad9907/1Hzy13qNpmuPhYxsQno3g_F5iHWcEs.jpg",sofia:"0aad9907/U7wuiE3kZIwxSvjCLouvG_E7Iiv5AE.jpg",aarav:"0aad9908/hSXTEdMkfRC308TKWy2rk_nt1op17e.jpg"}),
+   usage:M({towels:"0aad9907/GZU5mRpPpWrD2svEmhCxt_KteDH8PP.jpg",beforeafter:"0aad9908/aVllGGjoW2B7fPuJt-Mpq_DdCHbLqj.jpg",shelfie:"0aad9908/V319sz2yVN3Qjol0B30Kh_OBE20LMz.jpg",washer:"0aad9908/wX6qQv2n8t5zg-ElO7A6u_mHjFUb46.jpg"}),
+   ooh:M({billboard:"0aad9929/6mFX0s1_ReMnerclfYfCk_6FtooNTe.png",shelter:"0aad9929/imRsvzAlbLVWrY6nEUmsy_4b8adRJD.png",subway:"0aad9929/xAZ6fCYHR1fwyjOAjV-3e_C6PMBWwj.png"}),
+   ab:M({h1:"0aad9929/SpDZgnvE4ZrYbqfGLLdo5_VkjLty12.png",h2:"0aad9929/NbD5Dmgsfvnt3_VK-5UTr_Dkoiq8Tn.png",h3:"0aad9929/d2HkmXfmWBwku16ijeYUm_q0GruiGT.png",h4:"0aad9929/0MOgvScD07jp1Nptvqy5l_i5FfTUtt.png"})
+  },
+  glb:{hun:{url:U("0aad9918/k6pfpGO1Y0lMhBONvjqag_model.glb"),poster:U("0aad9918/kN58AHiFc-avGRm4lUomp_preview.png"),secs:161}},
+  creators:[{id:"laundry",name:"Laundry creator",img:U("0aad9908/QJzBnke7ibJSkeuD4nN09_YGug4CRd.jpg")}],
+  ugc:M({laundry_hack:"0aad992a/J5mwcWrlK7xj0gSTEo4vs_8aaef7f29ce5498195d300ffabf3f7bc.mp4"})
+ }
+};
+
+/* ---------- the fictional brands ---------- */
+const PRODUCTS=[
+ {id:"can",name:"Drinks can",pack:"slim 330ml aluminum beverage can",copy:"\"SOLA\" and \"sparkling water\"",img:IMG.sk_can},
+ {id:"box",name:"Cereal box",pack:"cereal box",copy:"\"BRINDLE OATS\", \"honey oat clusters\" and \"whole grain\"",img:IMG.sk_box},
+ {id:"bottle",name:"Detergent",pack:"laundry detergent bottle with a measuring cap",copy:"\"CLEARLOOM\", \"laundry detergent\" and \"40 loads\"",img:IMG.sk_bottle}
+];
+/* what the vision model would say about each preset; used for samples and as the starting profile */
+const PROFILES={
+ can:{cat:"drinks",product:"drinks can",brand:"SOLA"},
+ box:{cat:"food",product:"cereal box",brand:"BRINDLE OATS"},
+ bottle:{cat:"home",product:"laundry detergent bottle",brand:"CLEARLOOM"}
+};
+const DIRECTIONS=[
+ {id:"bold",name:"Bold and bright",desc:"Bold and bright. Saturated color blocking, big confident sans-serif type, high energy"},
+ {id:"minimal",name:"Premium minimal",desc:"Premium minimal. Restrained palette, generous empty space, refined thin typography, soft matte finish"},
+ {id:"natural",name:"Natural and organic",desc:"Natural and organic. Earthy tones, kraft paper texture, hand-drawn botanical illustration"},
+ {id:"retro",name:"Retro revival",desc:"Retro revival. Warm 1970s palette of orange, mustard and brown, rounded chunky type, sunburst stripes"}
+];
+const MARKETS=[
+ {id:"jp",name:"Japan",lang:"Japanese",city:"Tokyo",drink:"on the counter of a small independent Tokyo corner shop"},
+ {id:"mx",name:"Mexico",lang:"Spanish",city:"Mexico City",drink:"on a colorful tiled table at a Mexico City market stall"},
+ {id:"br",name:"Brazil",lang:"Brazilian Portuguese",city:"Rio de Janeiro",drink:"on a beach kiosk counter in Rio de Janeiro with the sea behind"},
+ {id:"fr",name:"France",lang:"French",city:"Paris",drink:"on a small marble cafe table on a Paris terrace"},
+ {id:"kr",name:"South Korea",lang:"Korean",city:"Seoul",drink:"on a table in a modern Seoul cafe"},
+ {id:"sa",name:"Saudi Arabia",lang:"Arabic",city:"Riyadh",drink:"on a counter in a modern Riyadh cafe"},
+ {id:"de",name:"Germany",lang:"German",city:"Berlin",drink:"on a wooden picnic table in a Berlin park"},
+ {id:"in",name:"India",lang:"Hindi",city:"Mumbai",drink:"on a street-side kiosk counter in Mumbai"}
+];
+const NAMES=[{id:"maya",name:"Made for Maya"},{id:"kenji",name:"Made for Kenji"},{id:"sofia",name:"Happy birthday Sofia"},{id:"aarav",name:"Go team Aarav"}];
+const ECOM={id:"ecom",name:"Marketplace main image",ar:"1:1",desc:"an online marketplace main image: the product front-facing and centered on a pure white background, filling about 85 percent of the frame, no props"};
+const ENDCAP={id:"endcap",name:"Endcap display",ar:"3:4",desc:"a supermarket endcap display stacked with cases and packs of this product, the aisle behind softly blurred"};
+const shelfSet=aisle=>[
+ {id:"shelf",name:"Store shelf",ar:"4:3",desc:`a supermarket ${aisle} at eye level, a neat row of identical packs of this product next to generic competitor products`},
+ ENDCAP,
+ {id:"club",name:"Club store pallet",ar:"4:3",desc:"a warehouse club store pallet stacked with multipacks of this product"},
+ ECOM,
+ {id:"hand",name:"Shopper's hand",ar:"4:3",desc:`a shopper's hand taking one pack from a supermarket ${aisle}, seen from the shopper's point of view, aisle softly blurred behind`}
+];
+const PUSH={id:"push",name:"Slow push-in",desc:"The camera slowly pushes in toward the product while the moment continues naturally around it."};
+const ORBIT={id:"orbit",name:"Cinematic orbit",desc:"The camera slowly orbits, keeping the product in focus in the foreground while the moment continues behind it."};
+const h4=(a,b,c,d)=>[a,b,c,d].map((n,i)=>({id:"h"+(i+1),name:n}));
+
+/* ---------- category profiles: everything downstream of Concept reads from these ---------- */
+const CATS={
+ drinks:{name:"Drinks",noun:"drink",word:"flavor",vlabel:"Flavors",where:"in someone's hand or on a table where people are eating or drinking",
+  setting:m=>m.drink,
+  variants:[{id:"lime",name:"Lime",hex:"#7DBE3C",art:"a lime slice"},{id:"grapefruit",name:"Pink Grapefruit",hex:"#F2706B",art:"a pink grapefruit slice"},{id:"blackberry",name:"Blackberry",hex:"#5B2A6E",art:"a cluster of blackberries"},{id:"mango",name:"Mango",hex:"#FFB000",art:"mango slices"},{id:"cucumber",name:"Cucumber Mint",hex:"#8FD1A8",art:"cucumber slices and mint leaves"},{id:"yuzu",name:"Yuzu",hex:"#E8D44D",art:"a halved yuzu fruit"}],
+  shelf:[{id:"shelf",name:"Store shelf",ar:"4:3",desc:"a supermarket shelf at eye level, a neat row of identical packs of this product next to generic competitor products"},
+   {id:"cooler",name:"Store cooler",ar:"3:4",desc:"a glass-door convenience store cooler, several packs of this product on a middle shelf among plain unlabeled drinks, light reflections on the glass"},
+   ENDCAP,ECOM,
+   {id:"hand",name:"Shopper's hand",ar:"4:3",desc:"a shopper's hand taking one pack from a supermarket shelf, seen from the shopper's point of view, aisle softly blurred behind"}],
+  audiences:[{id:"genz",name:"Gen Z rooftop",desc:"Gen Z friends hanging out on a rooftop at sunset"},{id:"family",name:"Family lunch",desc:"a family sharing a relaxed weekend lunch at home"},{id:"fitness",name:"Post-workout",desc:"a runner cooling down after a morning workout in a city park"},{id:"festive",name:"Celebration",desc:"friends at a festive evening celebration under string lights"},{id:"office",name:"Desk break",desc:"a young professional taking a break at a sunny work desk"}],
+  motions:[{id:"push",name:"Slow push-in",desc:"The camera slowly pushes in toward the product on the table while the people keep laughing and talking around it."},{id:"pickup",name:"Pick up and cheers",desc:"A person reaches for the product, picks it up and raises it in a cheers with the group, everyone smiling. Natural, candid motion."},{id:"orbit",name:"Cinematic orbit",desc:"The camera slowly orbits around the table, keeping the product in focus in the foreground while the moment continues behind it."}],
+  usage:[{id:"mocktail",name:"Mocktail serve",desc:"the drink poured over ice in a tall glass with fresh garnish, the product beside it on a sunny marble counter"},{id:"brunch",name:"Brunch spread",desc:"a weekend brunch table seen from above, the product among plates of food and coffee"},{id:"flatlay",name:"Ingredient flat lay",desc:"a styled flat lay of the product surrounded by its fresh ingredients on a colored paper backdrop"},{id:"picnic",name:"Picnic cooler",desc:"the product in an ice-filled cooler at a summer picnic, condensation on the pack"}],
+  scripts:[{id:"taste",name:"Taste test",desc:"Okay, honest taste test. Pink grapefruit... wow, that is so refreshing."},{id:"gym",name:"Gym bag essential",desc:"Post-workout, this is the first thing I grab. Cold, fizzy and so good."},{id:"switch",name:"Why I switched",desc:"I swapped my afternoon soda for this one. Real fruit flavor, and I love it."}],
+  names:[NAMES[0],{id:"kenji",name:"Kenji's can"},NAMES[2],NAMES[3]],
+  headlines:h4("Made to share","Taste the golden hour","Your new favorite fizz","Think pink")},
+ food:{name:"Food",noun:"packaged food product",word:"flavor",vlabel:"Flavors",where:"on a kitchen counter or breakfast table, with the food served from it",
+  setting:m=>`on a kitchen counter in a ${m.city} home, set for breakfast with local touches`,
+  variants:[{id:"strawberry",name:"Strawberry",hex:"#E4475B",art:"fresh strawberries"},{id:"cocoa",name:"Cocoa",hex:"#6B3E26",art:"cocoa pieces"},{id:"blueberry",name:"Blueberry",hex:"#4A5DAE",art:"blueberries"},{id:"maple",name:"Maple",hex:"#C67A2E",art:"a maple leaf and a syrup drizzle"},{id:"cinnamon",name:"Cinnamon",hex:"#B5651D",art:"cinnamon sticks"}],
+  shelf:shelfSet("breakfast cereal aisle"),
+  audiences:[{id:"family",name:"Family breakfast",desc:"a family having breakfast together before school"},{id:"dorm",name:"Late-night dorm",desc:"college students grabbing a late-night snack in a dorm kitchen"},{id:"fitness",name:"After the run",desc:"a runner refueling with breakfast after a morning run"},{id:"brunch",name:"Weekend brunch",desc:"friends sharing a relaxed weekend brunch at home"},{id:"office",name:"Office pantry",desc:"colleagues in an office pantry on a coffee break"}],
+  motions:[PUSH,{id:"pour",name:"Pour into a bowl",desc:"A hand pours the product from the pack into a bowl while the pack stays clearly visible."},ORBIT],
+  usage:[{id:"bowl",name:"Breakfast bowl",desc:"a breakfast bowl of the product with fresh berries and milk, the pack beside it on a sunny table"},{id:"bars",name:"Bake with it",desc:"homemade granola bars made with the product on a baking tray, the pack beside them"},{id:"flatlay",name:"Ingredient flat lay",desc:"a styled flat lay of the pack surrounded by its ingredients on a colored paper backdrop"},{id:"lunch",name:"Lunchbox",desc:"a packed school lunchbox with a small portion of the product, the pack beside it"}],
+  scripts:[{id:"routine",name:"Breakfast routine",desc:"Breakfast routine: this is what's in my bowl every morning. Crunchy, not too sweet, and my kids love it."},{id:"snack",name:"After-school snack",desc:"After-school snack check: the kids grab this straight from the box, and I'm totally fine with that."},{id:"switch",name:"Why I switched",desc:"I swapped my usual cereal for this one and I'm not going back."}],
+  names:NAMES,
+  headlines:h4("Mornings, sorted","Crunch you can count on","Breakfast, upgraded","Good mornings start here")},
+ home:{name:"Home care",noun:"household cleaning product",word:"scent",vlabel:"Scents",where:"in a laundry room or next to a washing machine, never on a dining table or near food",
+  setting:m=>`on a laundry room shelf in a ${m.city} home, next to a washing machine`,
+  variants:[{id:"lavender",name:"Lavender",hex:"#9C88C9",art:"lavender sprigs"},{id:"linen",name:"Fresh Linen",hex:"#A9C8E8",art:"a folded white towel"},{id:"citrus",name:"Citrus Burst",hex:"#F6B32B",art:"citrus slices"},{id:"sensitive",name:"Sensitive",hex:"#BFD9CC",art:"a soft feather"},{id:"eucalyptus",name:"Eucalyptus",hex:"#7FB8A4",art:"eucalyptus leaves"}],
+  shelf:shelfSet("laundry and cleaning aisle"),
+  audiences:[{id:"parents",name:"Busy parents",desc:"a busy parent doing laundry with a pile of kids' clothes"},{id:"firstapt",name:"First apartment",desc:"a young couple setting up the laundry nook in their first apartment"},{id:"eco",name:"Eco-minded home",desc:"an eco-minded household with a minimal, plant-filled laundry room"},{id:"pets",name:"Pet owners",desc:"a pet owner washing their dog's blankets"},{id:"gym",name:"Gym kit wash",desc:"someone washing a pile of sweaty workout clothes"}],
+  motions:[PUSH,{id:"cap",name:"Pour and load",desc:"A hand pours the liquid from the bottle into its measuring cap, then into the drum of a washing machine."},{id:"basket",name:"Fresh laundry reveal",desc:"A person lifts a basket of fresh folded laundry and smiles, the product visible beside them."}],
+  usage:[{id:"towels",name:"Fresh towels",desc:"a stack of fresh, fluffy folded towels beside the product on a laundry room counter"},{id:"beforeafter",name:"Before and after",desc:"a before and after of a stained white shirt next to the same shirt clean, with the product between them"},{id:"shelfie",name:"Laundry shelfie",desc:"a neat, styled laundry room shelf with baskets and plants, the product front and center"},{id:"washer",name:"On the washer",desc:"the product on top of a washing machine with a basket of fresh laundry"}],
+  scripts:[{id:"hack",name:"Laundry hack",desc:"Laundry day hack: one cap of this and everything comes out smelling amazing."},{id:"switch",name:"Why I switched",desc:"I switched detergents last month and my towels have never felt this soft."},{id:"gym",name:"Gym clothes test",desc:"Gym clothes are the real test. One wash with this and they actually smell fresh."}],
+  names:NAMES,
+  headlines:h4("Fresh starts here","Clean you can smell","Laundry day, solved","Softness in every load")},
+ personal:{name:"Personal care",noun:"personal care product",word:"scent",vlabel:"Scents",where:"in a bathroom, on a vanity or in a gym bag, never on a dining table or near food",
+  setting:m=>`on a bathroom vanity in a ${m.city} apartment`,
+  variants:[{id:"coconut",name:"Coconut",hex:"#F3E6D3",art:"coconut halves"},{id:"aloe",name:"Aloe",hex:"#8CC79A",art:"aloe leaves"},{id:"charcoal",name:"Charcoal",hex:"#3A3A3A",art:"charcoal pieces"},{id:"rose",name:"Rose",hex:"#E7A1B0",art:"rose petals"}],
+  shelf:shelfSet("personal care aisle"),
+  audiences:[{id:"morning",name:"Morning routine",desc:"someone's morning bathroom routine before work"},{id:"gym",name:"Gym shower",desc:"a post-workout shower in a gym locker room"},{id:"travel",name:"Weekend trip",desc:"packing a toiletry bag for a weekend trip"},{id:"selfcare",name:"Self-care night",desc:"a relaxing evening self-care routine at home"},{id:"teen",name:"School morning",desc:"a teenager getting ready for school"}],
+  motions:[PUSH,{id:"use",name:"In the routine",desc:"The person picks up the product and uses it as part of their routine, then sets it back down label forward."},ORBIT],
+  usage:[{id:"shelfie",name:"Bathroom shelfie",desc:"a styled bathroom shelf with towels and plants, the product front and center"},{id:"flatlay",name:"Ingredient flat lay",desc:"a flat lay of the product with its key ingredients on a soft colored backdrop"},{id:"travel",name:"Travel bag",desc:"the product packed in an open toiletry bag for a weekend trip"},{id:"spa",name:"Spa moment",desc:"the product on a bath tray with candles and a rolled towel"}],
+  scripts:[{id:"routine",name:"Morning routine",desc:"This is the one step in my morning routine I never skip. Smells amazing and lasts all day."},{id:"gym",name:"Gym bag essential",desc:"Gym bag essential. Quick rinse, this, and I'm good to go."},{id:"switch",name:"Why I switched",desc:"I switched to this a month ago and my skin has never felt better."}],
+  names:NAMES,
+  headlines:h4("Your new daily ritual","Feel fresh all day","Made for your routine","Clean, simply")}
+};
+const CAT_IDS=["drinks","food","home","personal"];
+const AB_FORMATS=[
+ {id:"p45",name:"Feed",r:"4:5",word:"portrait"},{id:"st",name:"Stories",r:"9:16",word:"vertical"},{id:"ls",name:"Landscape",r:"16:9",word:"landscape"}
+];
+const OOH=[
+ {id:"billboard",name:"Roadside billboard",ar:"16:9",desc:"a large roadside billboard at golden hour"},
+ {id:"shelter",name:"Bus shelter",ar:"3:4",desc:"a backlit bus shelter poster on a busy sidewalk"},
+ {id:"subway",name:"Subway posters",ar:"4:3",desc:"a row of posters on a subway platform wall"},
+ {id:"instore",name:"In-store display",ar:"3:4",desc:"a freestanding cardboard display in a supermarket aisle, stocked with the product"}
+];
+
+/* ---------- models ---------- */
+const VISION={id:"openrouter/router/vision",model:"google/gemini-2.5-flash",name:"Gemini 2.5 Flash"};
+const MDL={
+ nb:{id:"google/nano-banana-2.1/edit",name:"Nano Banana 2.1",lab:"Google",unit:0.045,tier:"Best quality"},
+ seed:{id:"bytedance/seedream/v5/pro/edit",name:"Seedream 5 Pro",lab:"ByteDance",unit:0.0675,tier:"Slower"},
+ klein:{id:"fal-ai/flux-2/klein/9b/edit",name:"FLUX.2 [klein]",lab:"Black Forest Labs",unit:0.022,tier:"Fastest",per:"about $0.02 per image, billed per megapixel"},
+ h3:{id:"minimax/h3-max/image-to-video",name:"H3 Max",lab:"MiniMax, tuned by fal",ps:0.03,tier:"Fast",video:true},
+ h3t:{id:"minimax/h3-max-turbo/image-to-video",name:"H3 Max Turbo",lab:"MiniMax, tuned by fal",ps:0.015,tier:"Fastest",video:true},
+ kling:{id:"fal-ai/kling-video/v3/pro/image-to-video",name:"Kling 3.0 Pro",lab:"Kuaishou",ps:0.14,tier:"Slower",video:true},
+ veo:{id:"fal-ai/veo3.1/fast/image-to-video",name:"Veo 3.1 Fast",lab:"Google",ps:0.15,tier:"Speech and sound",video:true},
+ hun:{id:"fal-ai/hunyuan-3d/v3.1/pro/image-to-3d",name:"Hunyuan 3D 3.1 Pro",lab:"Tencent",unit:null,tier:"Fastest of the three",m3d:true,per:"usage-based, see fal pricing"},
+ trellis:{id:"fal-ai/trellis-2",name:"Trellis 2",lab:"Microsoft",unit:0.30,tier:"Open model",m3d:true},
+ tripo:{id:"tripo3d/h3.1/image-to-3d",name:"Tripo H3.1",lab:"Tripo",unit:0.30,tier:"PBR textures",m3d:true,per:"$0.30 with standard textures"}
+};
+const FALLBACK={nb:"klein",seed:"klein",klein:"nb",h3:"h3t",h3t:"h3",kling:"h3",veo:"kling",hun:"tripo",trellis:"tripo",tripo:"hun"};
+
+/* ---------- "Today" benchmarks. Estimates from public pricing pages; see the business case notes ---------- */
+const TR={
+ concept:{today:"$5,000 to $40,000+ per pack design",time:"6 to 16 weeks for a full refresh",lo:5000,hi:40000,per:"once"},
+ variants:{today:"$600 to $1,500 per extra SKU",time:"Agency artwork rounds and print proofs",lo:600,hi:1500,per:"item"},
+ shelf:{today:"From $1,500 per shelf test",time:"Plus printed mock-ups of every variant",lo:1500,hi:1500,per:"once"},
+ localize:{today:"$450 to $1,500 per market adaptation",time:"Full EU artwork changes run over \u20ac5,000 per SKU",lo:450,hi:1500,per:"item"},
+ audiences:{today:"$3,000 to $8,000 per shoot day",time:"Per market, plus styling and retouching",lo:3000,hi:8000,per:"once"},
+ video:{today:"$500 to $5,000 per short video",time:"Crew, edit and versioning",lo:500,hi:5000,per:"item"},
+ personal:{today:"Not practical at scale",time:"Each name is its own artwork file",lo:0,hi:0},
+ ugc:{today:"$50 to $500+ per creator video",time:"Briefing, shipping product and revisions",lo:50,hi:500,per:"item"},
+ usage:{today:"$3,000 to $8,000 per shoot day",time:"Stylist and props on top",lo:3000,hi:8000,per:"once"},
+ m3d:{today:"$100 to $3,500 per SKU",time:"A few days to several weeks",lo:100,hi:3500,per:"item"},
+ ooh:{today:"$500 to $2,500 per creative",time:"Plus a mock-up for every placement",lo:500,hi:2500,per:"item"},
+ ab:{today:"A design round per variant",time:"So most teams test a handful, not dozens",lo:0,hi:0}
+};
+
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const money=n=>n==null?"usage-based":"$"+(n>0&&n<0.1&&Math.round(n*1000)%10?n.toFixed(3):n.toFixed(2));
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const LS={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}}};
+const fill=(t,v)=>t.replace(/\{(\w+)\}/g,(m,k)=>v[k]!=null?v[k]:m);
+const I={
+  dl:'<svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.5v8M4.5 7.5 8 11l3.5-3.5M3 13.5h10"/></svg>',
+  ck:'<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 8.5 3 3 6-7"/></svg>',
+  up:'<svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 11V3M4.5 6.5 8 3l3.5 3.5M3 13.5h10"/></svg>',
+  ar:'<svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>',
+  back:'<svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 8H3M7 4 3 8l4 4"/></svg>',
+  chev:'<svg class="chev" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m4 6 4 4 4-4"/></svg>',
+  play:'<svg class="ico" viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.2v9.6c0 .5.5.8.9.5l7.2-4.8c.4-.3.4-.8 0-1L5.9 2.7c-.4-.3-.9 0-.9.5Z"/></svg>',
+  grid:'<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>'
+};
+const SANDBOXED=/(^|\.)(claudeusercontent\.com|claude\.ai)$/.test(location.hostname);
+const SANDBOXMSG="Live runs can't start inside claude.ai, which blocks calls to outside APIs. Open the hosted version of CPG Studio to run live.";
+const NETMSG="Couldn't reach fal from this page. Open the hosted version of CPG Studio to run live.";
+
+/* ---------- prompt templates, editable per step. Words in braces come from the product profile and the option ---------- */
+const TPL={
+ concept:"Turn this packaging sketch into a photorealistic product photo of the finished {pack}. Design direction: {direction}. Keep the exact pack shape, proportions and layout from the sketch, and keep the brand name and printed text exactly as written: {copy}. Ignore the handwritten notes, arrows, construction lines and the sketchbook. Front three-quarter view, the pack centered on a pure white background, soft even studio lighting with a gentle contact shadow, crisp printed graphics, realistic materials.",
+ variants:"Create the {variant} {word} variant of this exact {product}. Keep the same pack shape, brand name, logo, layout, typography, camera angle and lighting. Recolor the main color blocks to {hex} with harmonizing tones, replace the illustration with {art}, and add the name \"{variant}\" in the same typeface just below the product descriptor. Pure white background, crisp printed graphics.",
+ shelf:"Place this exact {product} in {placement}. Every other product in the scene is fictional and plain: no logos, no brand names, no readable text, no real store names. Keep the product's shape, label design, colors and all printed text exactly as in the image, at a realistic size for its surroundings. Photorealistic commercial photography, lighting that suits the setting, sharp focus on the product.",
+ localize:"Localize this exact {product} for {market}. Keep the brand name and logo exactly as they are. Translate every other word on the pack into {language}, set in a typeface that matches the original style. Keep the pack shape, colors, graphics and illustration the same. Show the pack {setting}, at a realistic size, label facing the camera. Any other products, signs or stores in the scene are generic, with no real logos or brand names. Photorealistic, natural light.",
+ audiences:"Create an authentic lifestyle photo for {audience}. This exact {product} appears where it is really used: {usage}. Keep its pack shape, label, colors and text unchanged, label facing the camera, at a realistic size next to people and objects. People, styling and setting feel true to {market}. No other brand logos or readable brand names anywhere in the scene. Natural light, candid editorial photography.",
+ video:"{motion} Keep the {product}'s pack, label, colors and text exactly as in the image, at a realistic size. Smooth, realistic motion.",
+ personal:"Personalize this exact {product} for one customer. Replace the {word} name line with the words \"{message}\" set in the same typeface and color, sized to fit. Keep everything else on the pack exactly the same: shape, brand name, logo, colors, illustration, camera angle and lighting. Pure white background.",
+ ugc:"The person speaks directly to the camera in a casual, upbeat selfie-video style and says: \"{line}\" Natural hand and head movement, they keep holding the {product} with the label visible. Realistic voice, no background music.",
+ usage:"Create a styled product photo: {scene}. This exact {product} appears with its pack shape, label, colors and text unchanged, label facing the camera, at a realistic size. No other brand logos or readable brand names. Editorial photography, natural light.",
+ ooh:"Show this campaign image as {placement}, photographed in a real city setting. Add the headline \"{headline}\" in bold clean type on the ad. The ad artwork keeps the product, people and colors from the image. Any other signage in the scene is generic, with no real brand names or logos.",
+ ab:"Turn this image into a finished social media ad in a {aspect} {format_name} format. Set the headline \"{headline}\" in bold clean sans-serif type with strong contrast, plus a small \"Shop now\" button. Keep the product, people and colors exactly as they are, and do not cover the product."
+};
+const VPROMPT='You label consumer packaged goods for a creative tool. The image may be a sketch, a packshot or a scene. Identify the main product. Reply with JSON only, no prose: {"category": one of "drinks","food","home","personal", "product": a short noun phrase for the physical pack (for example "slim aluminum drinks can", "cereal box", "laundry detergent bottle", "shampoo bottle"), "brand": the brand name as printed or ""}';
+
+/* ---------- steps: six chained pipeline steps, then the other use cases ---------- */
+const IMGM=["nb","seed","klein"];
+const smp=id=>(o,c)=>c.base&&c.match?(((SAMP[c.chain].steps||{})[id]||{})[o.id]||null):null;
+const STEPS=[
+ {id:"concept",group:"pipe",tab:"Concept",title:"From sketch to finished pack",desc:"Turn a rough pack sketch into photoreal renders in every design direction you are weighing, before a single print proof.",
+  kind:"image",models:IMGM,presets:()=>PRODUCTS,srcLabel:"Sketch",sq:true,optLabel:()=>"Design directions",optHint:"One render each",
+  options:()=>DIRECTIONS,defN:4,ar:()=>"1:1",ph:"direction",
+  vars:(o,c)=>({pack:c.pack,copy:c.copy,direction:o.desc}),
+  sample:(o,c)=>c.preset&&c.match?IMG[c.preset+"_"+o.id]||null:null},
+ {id:"variants",group:"pipe",tab:"Variants",title:"Every variant and edition",desc:"Spin flavors, scents and limited editions from one master pack, matched to exact hex values. Logo, layout and type stay locked.",
+  kind:"image",models:IMGM,prev:"concept",baseLabel:"Sample pack",optLabel:c=>CATS[c.cat].vlabel,optHint:"Exact hex values",sq:true,
+  options:c=>CATS[c.cat].variants,defN:5,ar:()=>"1:1",ph:"variant",
+  vars:o=>({variant:o.name,hex:o.hex,art:o.art}),sample:smp("variants")},
+ {id:"shelf",group:"pipe",tab:"Shelf test",title:"Test it on shelf",desc:"See each variant in the aisle where it will really sell, next to generic competitors, plus a marketplace-ready main image, before anything is printed.",
+  kind:"image",models:IMGM,prev:"variants",baseLabel:"Sample pack",optLabel:()=>"Placements",optHint:"One image each",
+  options:c=>CATS[c.cat].shelf,defN:5,ar:o=>o.ar,ph:"placement",
+  vars:o=>({placement:o.desc}),sample:smp("shelf")},
+ {id:"localize",group:"pipe",tab:"Localize",title:"Localize for every market",desc:"Translate the pack copy and show it where it is used in each market. Headline and variant text only: legal and nutrition panels still go through your normal artwork process.",
+  kind:"image",models:IMGM,prev:"variants",baseLabel:"Sample pack",optLabel:()=>"Markets",optHint:"One image each",
+  options:()=>MARKETS,defN:6,ar:()=>"4:5",ph:"market",
+  vars:(o,c)=>({market:o.name,language:o.lang,setting:CATS[c.cat].setting(o)}),sample:smp("localize"),meta:o=>({market:o.name})},
+ {id:"audiences",group:"pipe",tab:"Audiences",title:"Personalize by audience and moment",desc:"Lifestyle imagery for each audience and occasion, in the places the product is really used, cast and styled for the market you picked.",
+  kind:"image",models:IMGM,prev:"localize",baseLabel:"Sample pack, localized",optLabel:()=>"Audiences and moments",optHint:"One image each",custom:"Describe an audience or moment",
+  options:c=>CATS[c.cat].audiences,defN:4,ar:()=>"4:5",ph:"audience",
+  vars:(o,c)=>({audience:o.desc,market:c.market,usage:CATS[c.cat].where}),sample:smp("audiences")},
+ {id:"video",group:"pipe",tab:"Social video",title:"Social video in seconds",desc:"Turn a campaign still into short clips for Reels, TikTok and retail media. One still, every cut you need.",
+  kind:"video",models:["h3","h3t","kling","veo"],prev:"audiences",baseLabel:"Sample scene",optLabel:()=>"Motion",optHint:"One clip each",custom:"Describe the motion",
+  options:c=>CATS[c.cat].motions,defN:3,ar:()=>"4:5",ph:"motion",dur:true,
+  vars:o=>({motion:o.desc}),sample:smp("video")},
+
+ {id:"personal",group:"more",tab:"Personalized packs",title:"A pack for every person",desc:"Names, messages and moments printed on the pack for gifting, loyalty and promotions. One template, thousands of versions.",
+  kind:"image",models:IMGM,prev:"variants",baseLabel:"Sample pack",optLabel:()=>"Messages",optHint:"One pack each",custom:"Type a name or message, like Go team Lena",sq:true,
+  options:c=>CATS[c.cat].names,defN:4,ar:()=>"1:1",ph:"message",
+  vars:o=>({message:o.name}),sample:smp("personal")},
+ {id:"ugc",group:"more",tab:"UGC creator ads",title:"Creator-style ads with speech",desc:"An AI presenter holds the product and talks to camera, with voice. Label AI presenters as each platform requires.",
+  kind:"video",models:["veo","kling"],presets:()=>SAMP[chain()].creators,srcLabel:"Creator",optLabel:()=>"Script",optHint:"One clip each",custom:"Type a line for the presenter to say",
+  options:c=>CATS[c.cat].scripts,defN:1,ar:()=>"9:16",ph:"line",fixedDur:8,audio:true,
+  vars:o=>({line:o.desc}),sample:(o,c)=>c.preset&&c.match?SAMP[c.chain].ugc[c.preset+"_"+o.id]||null:null},
+ {id:"usage",group:"more",tab:"Usage scenes",title:"Show it in use",desc:"Recipes, serves, routines and before-and-afters, styled for the product's category, without a studio day.",
+  kind:"image",models:IMGM,prev:"variants",baseLabel:"Sample pack",optLabel:()=>"Scenes",optHint:"One image each",custom:"Describe a scene",
+  options:c=>CATS[c.cat].usage,defN:4,ar:()=>"4:5",ph:"scene",
+  vars:o=>({scene:o.desc}),sample:smp("usage")},
+ {id:"m3d",group:"more",tab:"3D and AR",title:"A 3D model from one image",desc:"Turn a packshot into a textured 3D model for 360 viewers, AR try-out, virtual shelves and retail media. Small print on the texture can soften, so keep final artwork for print.",
+  kind:"3d",models:["hun","trellis","tripo"],prev:"variants",baseLabel:"Sample pack",sq:true,
+  options:()=>[{id:"glb",name:"3D model"}],defN:1,ar:()=>"1:1"},
+ {id:"ooh",group:"more",tab:"Out-of-home",title:"See it out in the world",desc:"Mock the campaign up on billboards, transit and in-store displays to sell it in, before you buy media.",
+  kind:"image",models:IMGM,prev:"audiences",baseLabel:"Sample scene",optLabel:()=>"Placements",optHint:"One mock-up each",headline:true,
+  options:()=>OOH,defN:3,ar:o=>o.ar,ph:"placement",
+  vars:(o,c)=>({placement:o.desc,headline:oohHeadline(c)}),sample:(o,c)=>!S.text.ooh||S.text.ooh.trim()===CATS[c.cat].headlines[0].name?smp("ooh")(o,c):null},
+ {id:"ab",group:"more",tab:"A/B ad variants",title:"Ad variants for testing",desc:"One key visual, many headlines and formats, so performance teams can test dozens of variants instead of three.",
+  kind:"image",models:IMGM,prev:"audiences",baseLabel:"Sample scene",optLabel:()=>"Headlines",optHint:"One ad each",custom:"Type a headline",fmt:true,
+  options:c=>CATS[c.cat].headlines,defN:4,ar:()=>abFmt().r,ph:"headline",
+  vars:o=>({headline:o.name,aspect:abFmt().r,format_name:abFmt().word}),sample:(o,c)=>S.abfmt==="p45"?smp("ab")(o,c):null}
+];
+const ST={};STEPS.forEach((s,i)=>{s.idx=i;ST[s.id]=s});
+const PIPE=STEPS.filter(s=>s.group==="pipe"),MORE=STEPS.filter(s=>s.group==="more");
+const FAST_MODEL={video:"h3t",ugc:"veo",m3d:"hun"};
+const abFmt=()=>AB_FORMATS.find(f=>f.id===S.abfmt)||AB_FORMATS[0];
+const oohHeadline=c=>(S.text.ooh||"").trim()||CATS[c.cat].headlines[0].name;
+
+/* ---------- state ---------- */
+const S={
+ step:"concept",gallery:false,track:"premium",key:LS.get("fal_key"),spend:0,view:"preview",vdur:6,abfmt:"p45",ptype:"auto",
+ sel:{},selCat:{},extra:{},src:{concept:"can"},text:{ooh:null},det:{},detecting:{},detErr:null,
+ up:{},ep:{},prompt:{},results:{},picked:{},running:{},batch:{},cancel:{},busy:{},cmp:null,cmpSave:null,board:false,pipe:null,
+ roi:{skus:40,markets:8,images:4,videos:2}
+};
+STEPS.forEach(s=>{S.sel[s.id]=[];S.extra[s.id]=[]});
+const cur=()=>ST[S.step];
+const liveMode=()=>!!S.key&&!SANDBOXED;
+
+/* ---------- sources: preset tiles, carry from an earlier step, the sample input, or an upload ---------- */
+function pickedRes(id){const r=S.results[id];return r?r.find(x=>x.id===S.picked[id]):null}
+function pickedUrl(id){const p=pickedRes(id);return p&&p.status==="done"&&p.url?p.url:null}
+/* the sample chain follows the sketch chosen in Concept */
+function chain(){const k=S.src.concept;return SAMP[k]?k:"can"}
+const base=id=>SAMP[chain()].base[id];
+function presetsOf(st){return st.presets?st.presets():null}
+function canCarry(st){if(!st.prev)return false;const c=pickedUrl(st.prev);if(!c)return false;if(liveMode())return true;return c===base(st.id)}
+function srcKind(st){
+  const ps=presetsOf(st),dflt=ps?ps[0].id:"base";let m=S.src[st.id]||dflt;
+  if(ps&&m!=="upload"&&m!=="carry"&&!ps.some(p=>p.id===m))m=dflt;
+  if(m==="carry"&&!canCarry(st))return dflt;
+  if(m==="upload"&&(!S.up[st.id]||!liveMode()))return dflt;
+  return m;
+}
+function srcUrl(st){const m=srcKind(st);if(m==="upload")return S.up[st.id];if(m==="carry")return pickedUrl(st.prev);const ps=presetsOf(st);if(ps){const p=ps.find(x=>x.id===m);return p?p.img:null}return base(st.id)}
+
+/* ---------- product profile: category, product noun and brand, carried down the chain ----------
+   Auto detect asks a vision model on fal about the source image; a manual pick overrides the category. */
+function profileOf(st,c){
+  let p=null;const url=srcUrl(st);
+  if(c.kind==="carry"){const r=pickedRes(st.prev);p=r&&r.meta&&r.meta.profile}
+  else if(c.kind==="upload")p=S.det[url]||null;
+  else if(st.id==="concept")p=(liveMode()&&S.det[url])||PROFILES[c.preset];
+  else p=PROFILES[c.chain];
+  p=p?Object.assign({},p):{cat:"drinks",product:"product",brand:"",pending:true};
+  if(S.ptype!=="auto"){if(p.cat!==S.ptype&&p.pending)p.product=CATS[S.ptype].noun;p.cat=S.ptype;p.manual=true}
+  return p;
+}
+function ctxOf(st){
+  const m=srcKind(st),ch=chain(),c={kind:m,chain:ch,base:false,preset:null};
+  if(st.presets){if(m!=="upload"&&m!=="carry")c.preset=m}else c.base=srcUrl(st)===base(st.id);
+  c.profile=profileOf(st,c);c.cat=c.profile.cat;
+  /* samples only apply when the category matches the sample chain's category */
+  c.match=c.cat===(st.id==="concept"&&c.preset?PROFILES[c.preset]:PROFILES[ch]).cat;
+  if(st.id==="concept"){const pr=c.preset?PRODUCTS.find(p=>p.id===c.preset):null;c.pack=pr?pr.pack:(c.profile.pending?"product package":c.profile.product);c.copy=pr?pr.copy:"every brand name and word exactly as written"}
+  if(st.id==="audiences"){const r=m==="carry"?pickedRes("localize"):null;c.market=r&&r.meta&&r.meta.market?r.meta.market:m==="base"?SAMP[ch].market:"the target market"}
+  return c;
+}
+function opts(st,c){return st.options(c||ctxOf(st)).concat(S.extra[st.id]||[])}
+/* in sample mode an option is only offered when a pre-generated sample exists for it */
+function optLive(st,o,c){if(liveMode())return false;if(st.kind==="3d")return false;return !st.sample(o,c)}
+function selOpts(st){
+  const c=ctxOf(st),all=opts(st,c),usable=all.filter(o=>!optLive(st,o,c));
+  /* a new category or sample chain resets the selection to that category's defaults */
+  const key=c.cat+"|"+c.chain+"|"+liveMode();
+  if(S.selCat[st.id]!==key){S.selCat[st.id]=key;S.sel[st.id]=usable.slice(0,st.defN).map(o=>o.id)}
+  let ids=S.sel[st.id].filter(id=>usable.some(o=>o.id===id));
+  if(!ids.length&&usable[0])ids=[usable[0].id];
+  S.sel[st.id]=ids;return all.filter(o=>ids.includes(o.id));
+}
+
+/* ---------- models ---------- */
+const durOf=st=>st.fixedDur||(st.dur?S.vdur:0);
+function eps(st){return st.models.map(k=>{const m=MDL[k];return Object.assign({key:k,label:m.name},m,{unit:m.ps?m.ps*durOf(st):m.unit})})}
+function epOf(st){const l=eps(st);const k=S.ep[st.id]||(S.track==="premium"?l[0].key:(FAST_MODEL[st.id]||"klein"));return l.find(e=>e.key===k)||l[0]}
+function fallbackOf(st){const k=FALLBACK[epOf(st).key];return k?eps(st).find(e=>e.key===k)||null:null}
+const priceTxt=e=>e.per?e.per:e.ps?money(e.ps)+" per second":money(e.unit)+(e.m3d?" per model":" per image");
+const SD_SIZE={"1:1":{width:1536,height:1536},"3:4":{width:1344,height:1792},"4:3":{width:1792,height:1344},"4:5":{width:1440,height:1800},"9:16":{width:1152,height:2048},"16:9":{width:2048,height:1152}};
+const FX_SIZE={"1:1":{width:1024,height:1024},"3:4":{width:768,height:1024},"4:3":{width:1024,height:768},"4:5":{width:896,height:1120},"9:16":{width:768,height:1344},"16:9":{width:1344,height:768}};
+/* one prompt, several APIs: each model family takes its own input shape */
+function imgInput(ep,prompt,urls,ar){
+  if(ep.key==="seed")return {prompt,image_urls:urls,image_size:SD_SIZE[ar]||"auto_2K",output_format:"jpeg"};
+  if(ep.key==="klein")return {prompt,image_urls:urls,image_size:FX_SIZE[ar]||"square_hd",output_format:"jpeg"};
+  return {prompt,image_urls:urls,num_images:1,aspect_ratio:ar||"auto",output_format:"jpeg"};
+}
+function vidInput(ep,prompt,url,dur,st){
+  if(ep.key==="kling")return {prompt,start_image_url:url,duration:String(dur),generate_audio:!!st.audio};
+  if(ep.key==="veo"){const o={prompt,image_url:url,duration:dur+"s",generate_audio:!!st.audio,resolution:"720p"};if(st.audio)o.aspect_ratio="9:16";return o}
+  return {prompt,image_url:url,duration:dur,resolution:"768P",prompt_expansion_mode:"balanced"};
+}
+function m3dInput(ep,url){
+  if(ep.key==="hun")return {input_image_url:url};
+  if(ep.key==="tripo")return {image_url:url,texture:true,pbr:true};
+  return {image_url:url};
+}
+const tplOf=st=>S.prompt[st.id]!=null?S.prompt[st.id]:TPL[st.id];
+
+function buildJobs(st,epArg){
+  const ep=epArg||epOf(st),jobs=[];let error=null;
+  const src=srcUrl(st),c=ctxOf(st),prof=c.profile;
+  if(!src)error=st.presets?"Pick a "+st.srcLabel.toLowerCase()+" first.":"Pick a source image first.";
+  if(st.kind==="3d"){
+    const g=c.base&&c.match?SAMP[c.chain].glb[ep.key]:null;
+    jobs.push({id:"glb-"+ep.key,name:ep.name,endpoint:ep.id,cost:ep.unit,input:m3dInput(ep,src),demo:g?g.url:null,poster:g?g.poster:src,m3d:true,ar:"1/1",sampleSecs:g?g.secs:null,meta:{profile:prof}});
+    return {jobs,error};
+  }
+  const common={product:prof.product,word:CATS[prof.cat].word,usage:CATS[prof.cat].where};
+  for(const o of selOpts(st)){
+    const prompt=fill(tplOf(st),Object.assign({},common,st.vars(o,c)));
+    const ar=st.ar(o);
+    const input=st.kind==="video"?vidInput(ep,prompt,src,durOf(st),st):imgInput(ep,prompt,[src],ar);
+    jobs.push({id:o.id,name:o.name,endpoint:ep.id,cost:ep.unit,input,demo:st.sample(o,c),meta:Object.assign({profile:prof},st.meta?st.meta(o,c):{}),
+      video:st.kind==="video",poster:st.kind==="video"?src:null,ar:ar.replace(":","/"),hex:o.hex});
+  }
+  if(!jobs.length&&!error)error="Pick at least one option.";
+  return {jobs,error};
+}
+
+/* ---------- compare models: pre-generated on the drinks can chain, with measured generation times on fal ---------- */
+const onCan=()=>chain()==="can"&&S.ptype!=="food"&&S.ptype!=="home"&&S.ptype!=="personal";
+const CMP={
+ concept:{what:"the can sketch in Bold and bright",ok:()=>srcKind(ST.concept)==="can"&&onCan()&&S.sel.concept[0]==="bold",def:()=>{S.src.concept="can";S.sel.concept=["bold"]},
+  nb:[IMG.can_bold,null],seed:[U("0aad965d/P8P14Y1MRBc3hNNwF9pr1_4e7c6931a1a3403f9665b78a404f19a3.jpg"),54],klein:[U("0aad9657/jbH3DqzcxkdNY58OvvjGs_wF03awI8.jpg"),2]},
+ variants:{what:"Pink Grapefruit on the sample can",ok:()=>onCan()&&ctxOf(ST.variants).base&&S.sel.variants[0]==="grapefruit",def:()=>{S.src.variants="base";S.sel.variants=["grapefruit"]},
+  nb:[SAMP.can.steps.variants.grapefruit,11],seed:[U("0aad965b/uPxSzUrmXUzjbBYVlnJXJ_6d5ef8d58a5a4180bb88b6c2ade0585b.jpg"),39],klein:[U("0aad9658/0mYFrfSni70gDZYKn2nE4_MPVoHKRR.jpg"),2]},
+ shelf:{what:"the store shelf with the sample can",ok:()=>onCan()&&ctxOf(ST.shelf).base&&S.sel.shelf[0]==="shelf",def:()=>{S.src.shelf="base";S.sel.shelf=["shelf"]},
+  nb:[SAMP.can.steps.shelf.shelf,13],seed:[U("0aad9673/eLsmRVYjB1ISzujJ12DE6_e0e7f1157a6840b286fae3d92833d81f.jpg"),139],klein:[U("0aad9665/7JrW9JWihdzjTnCJwFvEO_noZy8BJg.jpg"),2]},
+ localize:{what:"Mexico on the sample can",ok:()=>onCan()&&ctxOf(ST.localize).base&&S.sel.localize[0]==="mx",def:()=>{S.src.localize="base";S.sel.localize=["mx"]},
+  nb:[SAMP.can.steps.localize.mx,11],seed:[U("0aad9674/5PIcMASPoFgDwH30AiAhp_d91ac2e740ba4750877ca0299f4cbf89.jpg"),119],klein:[U("0aad9668/ShaaPjgMZQkU_a-DVXPqK_rKxcZnY6.jpg"),2]},
+ audiences:{what:"the Gen Z rooftop with the Mexico can",ok:()=>onCan()&&ctxOf(ST.audiences).base&&S.sel.audiences[0]==="genz",def:()=>{S.src.audiences="base";S.sel.audiences=["genz"]},
+  nb:[SAMP.can.steps.audiences.genz,12],seed:[U("0aad9698/K_N2Da4bJ9m1mOEvUYtCs_028a29a72bd144f7a737d07a41adf7f4.jpg"),134],klein:[U("0aad968b/A1YaCpJAOWihAUfIl88uC_fjUSC8G2.jpg"),2]},
+ video:{what:"a 6 second slow push-in on the sample scene",ok:()=>onCan()&&ctxOf(ST.video).base&&S.sel.video[0]==="push"&&S.vdur===6,def:()=>{S.src.video="base";S.sel.video=["push"];S.vdur=6},
+  h3:[SAMP.can.steps.video.push,6],h3t:[U("0aad96a1/ZO8VQoc52ysPE4M2Els4o_minimax-h3.mp4"),6],kling:[U("0aad96ac/vpZur4WrW-pGMtB6tQNdX_output.mp4"),121],veo:[U("0aad96a7/xfkmeQqvUKO765D0ig21a_1537ce24927442679ecf448c13ae398a.mp4"),66]},
+ ugc:{what:"the kitchen creator with the taste test script",ok:()=>onCan()&&srcKind(ST.ugc)==="kitchen"&&S.sel.ugc[0]==="taste",def:()=>{S.src.ugc="kitchen";S.sel.ugc=["taste"]},
+  veo:[SAMP.can.ugc.kitchen_taste,60],kling:[U("0aad96ad/Ep7Ta_WfZ9g-tfvMxkIFW_output.mp4"),126]},
+ m3d:{what:"the sample can",ok:()=>onCan()&&ctxOf(ST.m3d).base,def:()=>{S.src.m3d="base"},
+  hun:[SAMP.can.glb.hun.url,162],trellis:[SAMP.can.glb.trellis.url,253],tripo:[SAMP.can.glb.tripo.url,207]}
+};
+const canCompare=st=>liveMode()||(!SANDBOXED&&!!CMP[st.id]&&onCan());
+function cmpOn(st){selOpts(st);S.cmpSave={sel:S.sel[st.id].slice()};S.sel[st.id].splice(1);S.cmp=st.id;if(!liveMode()&&CMP[st.id])CMP[st.id].def()}
+function cmpOff(){if(S.cmp==null)return;const id=S.cmp,sv=S.cmpSave||{};if(sv.sel){const c0=S.sel[id][0];S.sel[id]=sv.sel;if(c0!=null&&!S.sel[id].includes(c0))S.sel[id].push(c0)}S.cmp=null;S.cmpSave=null}
+function pickOpt(st,v){selOpts(st);const a=S.sel[st.id];if(S.cmp===st.id){a.splice(0,a.length,v);return}const k=a.indexOf(v);if(k>-1){if(a.length>1)a.splice(k,1)}else a.push(v)}
+function jobsFor(st){
+  if(S.cmp!==st.id)return buildJobs(st);
+  const c=CMP[st.id],ok=!!(c&&c.ok()),out=[];let error=null;
+  for(const ep of eps(st)){const b=buildJobs(st,ep);if(b.error){error=b.error;break}const j=b.jobs[0];if(!j)continue;
+    const s=ok&&c[ep.key];
+    out.push(Object.assign({},j,{id:"m-"+ep.key,name:ep.name,lab:ep.lab,model:ep.key,opt:j.name,demo:s?s[0]:null,sampleSecs:s?s[1]:null,poster:j.m3d&&s?(SAMP.can.glb[ep.key].poster||j.poster):j.poster}));}
+  if(!out.length&&!error)error="Pick an option first.";
+  return {jobs:error?[]:out,error};
+}
+const unitWord=st=>st.kind==="video"?"clip":st.kind==="3d"?"model":"image";
+function estHTML(st){
+  const {jobs}=jobsFor(st),n=jobs.length,known=jobs.filter(j=>j.cost!=null),tot=known.reduce((a,j)=>a+j.cost,0),u=unitWord(st);
+  if(S.cmp===st.id)return `${n} models, one ${u} each = <b>${known.length===n?money(tot):"about "+money(tot)+" plus usage-based"}</b>`;
+  const ep=epOf(st);if(ep.unit==null)return `${n} ${u}, ${esc(ep.per)}`;
+  return `${n} ${u}${n===1?"":"s"} \u00d7 ${money(ep.unit)} = <b>${money(tot)}</b>`;
+}
+
+/* ---------- fal queue API ---------- */
+async function errOf(res){
+  let t="";try{const j=await res.json();const d=j.detail;t=typeof d==="string"?d:Array.isArray(d)?d.map(x=>x.msg||JSON.stringify(x)).join("; "):(j.message||j.error||"")}catch(e){}
+  if(res.status===401||res.status===403)return "fal rejected this key. Check it under Add fal key.";
+  return String(t||("Request failed ("+res.status+")")).slice(0,200);
+}
+function tfetch(url,opt,ms){const c=new AbortController();const t=setTimeout(()=>c.abort(),ms||30000);return fetch(url,Object.assign({},opt,{signal:c.signal})).finally(()=>clearTimeout(t))}
+function outOf(j){
+  const f=(j.images&&j.images[0])||j.image||j.video||j.model_glb||(j.model_urls&&j.model_urls.glb)||j.model_mesh;
+  const p=j.thumbnail||j.rendered_image;
+  return f&&f.url?{url:f.url,poster:p&&p.url?p.url:null}:null;
+}
+async function falCall(endpoint,input,onStatus,isCancelled){
+  const H={"Authorization":"Key "+S.key,"Content-Type":"application/json"};
+  let res;try{res=await tfetch("https://queue.fal.run/"+endpoint,{method:"POST",headers:H,body:JSON.stringify(input)},45000)}catch(e){throw new Error(e.name==="AbortError"?"fal didn't respond. Check your connection and try again.":NETMSG)}
+  if(!res.ok)throw new Error(await errOf(res));
+  const sub=await res.json();
+  if(!sub.status_url||!sub.response_url)throw new Error("fal did not accept the request.");
+  const started=Date.now();
+  for(;;){
+    await sleep(1500);
+    if(isCancelled&&isCancelled()){if(sub.cancel_url)tfetch(sub.cancel_url,{method:"PUT",headers:H},10000).catch(()=>{});throw new Error("Cancelled")}
+    if(Date.now()-started>10*60*1000)throw new Error("Still waiting in fal's queue after 10 minutes. Try again or switch to a faster model.");
+    let r;try{r=await tfetch(sub.status_url,{headers:H},20000)}catch(e){continue}
+    if(!r.ok)throw new Error(await errOf(r));
+    const s=await r.json();onStatus&&onStatus(s.status,s.queue_position,sub.request_id);
+    if(s.status==="COMPLETED")break;
+  }
+  let out;try{out=await tfetch(sub.response_url,{headers:H},30000)}catch(e){throw new Error(NETMSG)}
+  if(!out.ok)throw new Error(await errOf(out));
+  return out.json();
+}
+async function falRun(endpoint,input,onStatus,isCancelled){
+  const o=outOf(await falCall(endpoint,input,onStatus,isCancelled));
+  if(!o)throw new Error("fal returned no output for this request.");
+  return o;
+}
+/* vision auto detect: one small call per source image, cached */
+function parseProfile(txt){
+  const m=String(txt||"").match(/\{[\s\S]*\}/);if(!m)return null;
+  let j;try{j=JSON.parse(m[0])}catch(e){return null}
+  const cat=CAT_IDS.includes(j.category)?j.category:null;if(!cat)return null;
+  return {cat,product:String(j.product||CATS[cat].noun).slice(0,60),brand:String(j.brand||"").slice(0,40),detected:true};
+}
+async function detect(url){
+  if(!url||S.det[url]||S.detecting[url])return;
+  S.detecting[url]=true;S.detErr=null;if(typeof renderInput==="function"&&!S.gallery)renderInput();
+  try{const j=await falCall(VISION.id,{model:VISION.model,image_urls:[url],prompt:VPROMPT});const p=parseProfile(j.output);
+    if(p){S.det[url]=p;S.spend+=0.001}else S.detErr="The vision model couldn't tell what the product is. Pick a product type.";}
+  catch(e){S.detErr="Auto detect failed: "+e.message}
+  finally{delete S.detecting[url];if(typeof render==="function")render()}
+}
+/* auto detect runs on uploads and, live, on the Concept sketch; carried picks already know their profile */
+function needsDetect(st){if(S.ptype!=="auto"||!liveMode())return null;const m=srcKind(st);if(m==="upload"||(st.id==="concept"&&m!=="carry"))return srcUrl(st);return null}
+
+async function run(st){
+  const id=st.id;if(S.running[id])return;
+  const du=needsDetect(st);if(du&&!S.det[du]){await detect(du);if(!S.det[du]&&!S.pipe){toast(S.detErr||"Pick a product type first.");return}}
+  const {jobs,error}=jobsFor(st);
+  if(error){toast(error);return}
+  delete S.picked[id];S.view="preview";
+  if(S.key&&SANDBOXED&&!S.pipe)toast(SANDBOXMSG);
+  if(!liveMode()){
+    S.results[id]=jobs.map(j=>Object.assign({},j,{url:j.demo,status:"done",sample:true,secs:j.sampleSecs}));
+    S.batch[id]=null;render();return;
+  }
+  const items=jobs.map(j=>Object.assign({},j,{status:"queued"}));
+  const rid=(S.rid=(S.rid||0)+1);S.runOf=S.runOf||{};S.runOf[id]=rid;S.results[id]=items;S.running[id]=true;S.cancel[id]=false;S.busy[id]=0;
+  const t0=performance.now();items.forEach(it=>it.t0=Date.now());render();
+  const tick=setInterval(()=>items.forEach((it,k)=>{if(it.status==="queued"||it.status==="running")updateCard(id,k)}),1000);
+  await Promise.all(items.map(async(it,k)=>{
+    const s0=performance.now();
+    try{
+      const o=await falRun(it.endpoint,it.input,(stt,pos,req)=>{it.reqId=req;const ns=stt==="IN_QUEUE"?"queued":"running";if(ns!==it.status||pos!==it.pos){it.status=ns;it.pos=pos;updateCard(id,k);if(ns==="queued"&&pos>25&&!S.busy[id]){S.busy[id]=pos;if(S.step===id)renderResult()}}},()=>S.cancel[id]);
+      it.url=o.url;if(o.poster)it.poster=o.poster;
+      it.secs=(performance.now()-s0)/1000;it.status="done";S.spend+=it.cost||0;
+    }catch(e){it.status="error";it.err=e.message}
+    updateCard(id,k);renderTop();
+  }));
+  clearInterval(tick);if(S.runOf[id]!==rid)return;S.running[id]=false;S.batch[id]={secs:(performance.now()-t0)/1000};
+  if(items.every(x=>x.status==="error")&&items[0].err&&!S.cancel[id])toast(items[0].err);
+  render();
+}
+
+/* ---------- full pipeline: each step's pick feeds the next ---------- */
+function pipelineEstimate(){let n=0,c=0;PIPE.forEach(st=>{const k=selOpts(st).length;n+=k;c+=k*(epOf(st).unit||0)});return {n,c}}
+async function runPipeline(){
+  if(S.pipe||STEPS.some(st=>S.running[st.id]))return;
+  const live=liveMode(),t0=performance.now();
+  cmpOff();S.pipe={i:0};S.board=false;S.gallery=false;renderBoard();renderPipe();
+  for(let i=0;i<PIPE.length;i++){
+    const st=PIPE[i];S.pipe.i=i;S.step=st.id;S.view="preview";
+    if(st.prev)S.src[st.id]=canCarry(st)?"carry":"base";
+    render();
+    await run(st);
+    if(!live)await sleep(380);
+    const done=(S.results[st.id]||[]).filter(x=>x.status==="done"&&x.url);
+    if(!done.length){toast("The "+st.tab+" step didn't return a result, so the pipeline stopped there.");S.pipe=null;render();return}
+    const pref=SAMP[chain()].pref[st.id];
+    S.picked[st.id]=(done.find(x=>x.id===pref)||done[0]).id;
+  }
+  S.boardStats={secs:(performance.now()-t0)/1000,live};
+  S.pipe=null;S.board=true;render();
+  const b=$("#board");b&&b.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
+}
+
+/* ---------- downloads and uploads ---------- */
+function dataBlob(u){const [h,b64]=u.split(",");const mime=(h.match(/data:([^;]+)/)||[])[1]||"image/jpeg";const bin=atob(b64);const arr=new Uint8Array(bin.length);for(let k=0;k<bin.length;k++)arr[k]=bin.charCodeAt(k);return new Blob([arr],{type:mime})}
+let dlCap;
+async function download(url,name){
+  let blob;
+  try{blob=/^data:/.test(url)?dataBlob(url):await (await fetch(url)).blob()}
+  catch(e){if(/^https?:/.test(url))window.open(url,"_blank","noopener");else toast("Your browser blocked the download.");return}
+  return saveBlob(blob,name);
+}
+async function saveBlob(blob,name){
+  /* inside the claude.ai viewer, saves go through its downloads capability */
+  if(window.claude&&window.claude.use){try{if(dlCap===undefined)dlCap=await window.claude.use("downloads");if(dlCap){await dlCap.save({filename:name,data:blob});return}}catch(e){return}}
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+}
+const slug=s=>String(s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+function extOf(url){if(/\.mp4($|\?)/.test(url))return "mp4";if(/\.glb($|\?)/.test(url))return "glb";if(/\.fbx($|\?)/.test(url))return "fbx";return /^data:image\/webp/.test(url)?"webp":/^data:image\/png|\.png($|\?)/.test(url)?"png":"jpg"}
+function openUpload(target){const f=$("#fileIn");f.dataset.target=target;f.value="";f.click()}
+$("#fileIn").addEventListener("change",async e=>{
+  const file=e.target.files&&e.target.files[0];if(!file)return;const target=e.target.dataset.target;
+  if(!/^image\//.test(file.type)){toast("Choose a PNG, JPG or WebP image.");return}
+  try{
+    const url=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file)});
+    const img=await new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=url});
+    const sc=Math.min(1,1536/Math.max(img.naturalWidth,img.naturalHeight));const c=document.createElement("canvas");
+    c.width=Math.round(img.naturalWidth*sc);c.height=Math.round(img.naturalHeight*sc);const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0,c.width,c.height);
+    S.up[target]=c.toDataURL("image/jpeg",0.9);
+  }catch(err){toast("That image couldn't be read. Try another file.");return}
+  S.src[target]="upload";renderInput();if(liveMode()&&S.ptype==="auto")detect(S.up[target]);
+});
+async function downloadZip(){
+  if(S.zipping)return;
+  if(!window.JSZip){toast("The zip tool didn't load. Check your connection and try again.");return}
+  const items=[];STEPS.forEach(st=>(S.results[st.id]||[]).filter(x=>x.url&&x.status==="done").forEach(r=>items.push({st,r})));
+  if(!items.length){toast("Nothing to download yet.");return}
+  S.zipping=true;toast("Preparing a zip of "+items.length+" assets\u2026");
+  const zip=new window.JSZip();let added=0,skipped=0;const used={};
+  await Promise.all(items.map(async({st,r})=>{
+    try{
+      const blob=/^data:/.test(r.url)?dataBlob(r.url):await (await tfetch(r.url,{},90000)).blob();
+      const folder=(st.group==="pipe"?String(PIPE.indexOf(st)+1).padStart(2,"0")+"-":"more-")+slug(st.tab);
+      let base=slug(r.name)||"asset";const key=folder+"/"+base;used[key]=(used[key]||0)+1;if(used[key]>1)base+="-"+used[key];
+      zip.file(folder+"/"+base+"."+extOf(r.url),blob);added++;
+    }catch(e){skipped++}
+  }));
+  try{
+    if(!added){toast("Couldn't fetch the assets for the zip. Try again.");return}
+    const out=await zip.generateAsync({type:"blob",compression:"STORE"});
+    await saveBlob(out,"fal-cpg-studio-campaign.zip");
+    toast(skipped?`Zip ready with ${added} assets. ${skipped} couldn't be fetched here and were left out.`:`Zip ready with ${added} assets.`);
+  }finally{S.zipping=false}
+}
+/* 3D results use Google's model-viewer, loaded only when a 3D card first appears */
+function ensureMV(){if(window.customElements&&customElements.get("model-viewer"))return;if(document.getElementById("mvjs"))return;const s=document.createElement("script");s.type="module";s.id="mvjs";s.src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3/dist/model-viewer.min.js";document.head.appendChild(s)}
+
+/* ---------- render: chrome ---------- */
+function renderTop(){
+  const live=liveMode();
+  const tag=$("#modeTag");tag.textContent=live?"Live":"Sample mode";tag.className="tag"+(live?" live":"");
+  const sp=$("#spend");sp.hidden=!live;sp.innerHTML="Session <b>"+money(S.spend)+"</b>";
+  const kb=$("#keyBtn");kb.className=live?"btn":"btn dark";kb.innerHTML=live?'<span class="dot"></span>fal key connected':"Add fal key";
+  document.querySelectorAll('[data-act="track"]').forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===S.track));
+}
+function renderTabs(){
+  const moreOn=S.gallery||cur().group==="more";
+  $("#tabs").innerHTML=`<span class="tabgrp">Campaign pipeline</span>`+PIPE.map((st,i)=>{const on=!S.gallery&&S.step===st.id,done=S.picked[st.id]!==undefined&&!on;
+    const spin=S.pipe&&S.pipe.i===i;
+    return `<button class="tab ${done?"done":""}" data-act="tab" data-v="${st.id}" ${on?'aria-current="step"':""}><span class="n">${spin?'<span class="spin" style="width:10px;height:10px;border-width:1.5px"></span>':done?I.ck:i+1}</span>${st.tab}</button>`}).join("")
+    +`<span class="tabsep" aria-hidden="true"></span><button class="tab" data-act="gallery" ${moreOn?'aria-current="step"':""}><span class="n grid4">${I.grid}</span>More use cases</button>`;
+  const sub=$("#subtabs");sub.hidden=!moreOn;
+  sub.innerHTML=moreOn?`<button class="subtab" data-act="gallery" ${S.gallery?'aria-current="page"':""}>All</button>`+MORE.map(st=>`<button class="subtab" data-act="tab" data-v="${st.id}" ${!S.gallery&&S.step===st.id?'aria-current="page"':""}>${esc(st.tab)}</button>`).join(""):"";
+  renderPipe();
+}
+function renderPipe(){
+  const el=$("#pipe");if(!el)return;
+  if(S.pipe){el.innerHTML=`<button class="btn light" disabled><span class="spin"></span>Running ${PIPE[S.pipe.i].tab}, step ${S.pipe.i+1} of ${PIPE.length}</button><span class="pipemeta">Each step feeds its pick into the next.</span>`;return}
+  const e=pipelineEstimate();
+  el.innerHTML=`<button class="btn light" data-act="pipeline">${I.play}Run the full pipeline</button><span class="pipemeta">${PIPE.length} steps, <b>${e.n} assets</b>${liveMode()?`, about <b>${money(e.c)}</b> on your fal key`:` from samples. About <b>${money(e.c)}</b> to run live`}</span>`;
+}
+
+/* ---------- render: input panel ---------- */
+const field=(label,hint,body)=>`<div class="field"><div class="flabel">${label}${hint?`<span>${hint}</span>`:""}</div>${body}</div>`;
+const LIVETIP="Add your fal key to run this live";
+function tile(act,v,on,img,label,o){o=o||{};return `<button class="tile ${o.sq?"sq":""}" data-act="${act}" data-v="${esc(v)}" aria-pressed="${!!on&&!o.dis}" ${o.dis?`disabled title="${LIVETIP}"`:""}><span class="ti">${img?`<img src="${img}" alt="">`:""}</span><span class="tl">${esc(label)}${o.dis?' <span class="lv">Live</span>':""}</span></button>`}
+function upTile(st,on,sq){
+  const dis=!liveMode();
+  if(S.up[st.id]&&!dis)return tile("src","upload",on,S.up[st.id],on?"Replace":"Your upload",{sq});
+  return `<button class="tile add ${sq?"sq":""}" data-act="upload" data-v="${st.id}" ${dis?`disabled title="${LIVETIP}"`:""}><span class="ti">${I.up}</span><span class="tl">Upload</span></button>`;
+}
+function chip(st,o,on,c){const dis=optLive(st,o,c);const small=o.lang||(o.ar&&st.id!=="ooh"?o.ar:"")||(o.hex||"");
+  return `<button class="chip" data-act="opt" data-v="${esc(o.id)}" aria-pressed="${!!on&&!dis}" ${dis?`disabled title="${LIVETIP}"`:""}>${o.hex?`<span class="sw" style="background:${o.hex}"></span>`:""}${esc(o.name)}${small?` <small>${esc(small)}</small>`:""}${dis?' <span class="lv">Live</span>':""}</button>`}
+function sourceField(st){
+  const m=srcKind(st);
+  const ps=presetsOf(st);
+  if(ps)return field(st.srcLabel,"Pick one",`<div class="tiles">${ps.map(p=>tile("src",p.id,m===p.id,p.img,p.name,{sq:st.sq})).join("")}${upTile(st,m==="upload",st.sq)}</div>`);
+  const prev=st.prev?pickedUrl(st.prev):null;
+  return field("Source","Pick one",`<div class="tiles">
+    ${prev?tile("src","carry",m==="carry",prev,"From "+ST[st.prev].tab,{dis:!canCarry(st),sq:st.sq}):""}
+    ${tile("src","base",m==="base",base(st.id),st.baseLabel,{sq:st.sq})}
+    ${upTile(st,m==="upload",st.sq)}</div>`);
+}
+function customRow(st){const dis=!liveMode();return `<div class="addrow"><input type="text" id="custom-in" placeholder="${esc(dis?"Add your fal key to write your own":st.custom)}" aria-label="Add your own" maxlength="200" ${dis?"disabled":""}><button class="btn sm" data-act="addcustom" ${dis?"disabled":""}>Add</button></div>`}
+function modelField(st){
+  const ep=epOf(st),on=S.cmp===st.id,dis=!canCompare(st)||!!S.pipe;
+  const sub=on?"One "+unitWord(st)+" from each model":ep.lab+" \u00b7 "+priceTxt(ep)+" \u00b7 "+ep.tier;
+  const why=S.pipe?"Compare is off while the full pipeline runs":SANDBOXED?"Open the hosted version of CPG Studio to compare models":"Add your fal key to compare models on this step";
+  return field("Model",esc(sub),`<div class="mrow"><select id="epSel" aria-label="Model for this step" ${on?"disabled":""}>${eps(st).map(e=>`<option value="${e.key}" ${e.key===ep.key?"selected":""}>${esc(e.name)} \u00b7 ${esc(e.lab)} \u00b7 ${e.ps?money(e.ps)+"/s":e.unit==null?"usage-based":money(e.unit)}</option>`).join("")}</select><button class="cmpbtn" data-act="compare" aria-pressed="${on}" ${dis?`disabled title="${why}"`:`title="Run one option on every model side by side"`}><i></i>Compare models</button></div>`);
+}
+const PT_OPTS=[["auto","Auto detect (vision model)"]].concat(CAT_IDS.map(k=>[k,CATS[k].name]));
+function ptypeField(st,c){
+  const p=c.profile,url=srcUrl(st);let hint;
+  if(S.ptype!=="auto")hint="Set by you for every step";
+  else if(url&&S.detecting[url])hint="Detecting with "+VISION.name+"\u2026";
+  else if(p.pending)hint=S.detErr&&c.kind==="upload"?S.detErr:"Detects with "+VISION.name+" when you run";
+  else if(p.detected)hint="Detected by "+VISION.name;
+  else if(c.kind==="carry")hint="From your "+ST[st.prev].tab+" pick";
+  else hint=liveMode()&&st.id==="concept"?"Detects with "+VISION.name+" when you run":"Pre-detected for the sample";
+  const now=p.pending?"":`<p class="fnote" style="margin-top:8px"><b>${esc(CATS[p.cat].name)}</b>: ${esc(p.product)}${p.brand?" \u00b7 "+esc(p.brand):""}</p>`;
+  return field("Product type",esc(hint),`<div class="mrow"><select id="ptypeSel" aria-label="Product type">${PT_OPTS.map(([v,l])=>`<option value="${v}" ${S.ptype===v?"selected":""}>${esc(l)}</option>`).join("")}</select></div>${now}`);
+}
+function stepFields(st){
+  const c=ctxOf(st);let h=sourceField(st);
+  if(st.kind!=="3d")h+=ptypeField(st,c);
+  if(st.headline)h+=field("Headline",liveMode()?"Set on every placement":"Samples use the default",`<input type="text" id="oohIn" class="txt" value="${esc(oohHeadline(c))}" maxlength="60" aria-label="Headline" ${liveMode()?"":"disabled"}>`);
+  if(st.fmt)h+=field("Format","",`<div class="seg" role="group" aria-label="Ad format">${AB_FORMATS.map(f=>{const dis=!liveMode()&&f.id!=="p45";return `<button data-act="abfmt" data-v="${f.id}" aria-pressed="${S.abfmt===f.id}" ${dis?`disabled title="${LIVETIP}"`:""}>${f.name} ${f.r}</button>`}).join("")}</div>`);
+  if(st.kind==="3d")return h+field("Output","",`<p class="fnote">A textured GLB file, ready for web 360 viewers, AR and 3D tools. Generation takes a few minutes per model.</p>`);
+  const all=opts(st,c),ids=selOpts(st).map(o=>o.id);
+  h+=field(st.optLabel(c),S.cmp===st.id?"Pick one to compare":st.optHint,`<div class="chips">${all.map(o=>chip(st,o,ids.includes(o.id),c)).join("")}</div>${st.custom?customRow(st):""}`);
+  if(st.dur)h+=field("Length",S.cmp===st.id?"Same length for each model":money(epOf(st).ps)+" per second",`<div class="seg" role="group" aria-label="Clip length">${[4,6,8].map(d=>`<button data-act="vdur" data-v="${d}" aria-pressed="${S.vdur===d}">${d} seconds</button>`).join("")}</div>`);
+  if(st.fixedDur)h+=field("Length","",`<p class="fnote">${st.fixedDur} second clips with the presenter's voice and room sound.</p>`);
+  return h;
+}
+function renderInput(){
+  const st=cur(),i=st.group==="pipe"?PIPE.indexOf(st):MORE.indexOf(st),hasPrompt=!!TPL[st.id];
+  const chain=st.prev?`<span class="chain">${I.ar}Uses your ${esc(ST[st.prev].tab)} pick</span>`:"";
+  $("#inputPanel").innerHTML=`
+    <div class="phead"><h2>Input</h2><span class="eyebrow">${st.group==="pipe"?`Step ${i+1} of ${PIPE.length}`:"More use cases"}</span></div>
+    <div class="intro"><h3>${esc(st.title)}</h3><p>${esc(st.desc)}</p>${st.group==="more"?chain:""}</div>
+    <div class="fields">${modelField(st)+stepFields(st)}</div>
+    ${hasPrompt?`<details class="adv" ${S.advOpen?"open":""} id="adv"><summary>Prompt ${I.chev}</summary>
+      <div class="inner"><div class="ctl"><label for="prIn">Prompt template</label><textarea id="prIn">${esc(tplOf(st))}</textarea><span class="hint">Words in braces, like {${st.ph}}, are filled in for each ${unitWord(st)}. <button class="btn ghost sm" data-act="resetprompt" style="height:auto;padding:0;color:var(--accent)">Reset</button></span></div></div></details>`:""}
+    <div class="pfoot"><span class="est tnum" id="estLine">${estHTML(st)}</span>
+      <button class="btn primary" data-act="run" ${S.running[st.id]?"disabled":""}>${I.play}${S.running[st.id]?"Running":(liveMode()?"Run":"Show samples")}</button></div>`;
+}
+
+/* ---------- render: result panel ---------- */
+function fmtDur(sec){sec=Math.round(sec);if(sec<60)return sec+"s";return Math.floor(sec/60)+" min "+String(sec%60).padStart(2,"0")+"s"}
+function mediaHTML(r){
+  if(r.m3d){ensureMV();return `<model-viewer src="${r.url}" ${r.poster?`poster="${r.poster}"`:""} camera-controls auto-rotate shadow-intensity="0.6" exposure="1.05" loading="lazy" alt="${esc(r.name)}"></model-viewer><span class="vtag">3D, drag to rotate</span>`}
+  if(r.video)return `<video src="${r.url}" ${r.poster?`poster="${r.poster}"`:""} muted loop playsinline autoplay preload="metadata"></video><span class="vtag">Video</span>`;
+  return `<img src="${r.url}" alt="${esc(r.name)}" loading="lazy">`;
+}
+function cardHTML(id,r,k){
+  const st=ST[id];let inner="",cls="card";
+  if(r.status==="queued"||r.status==="running"){cls+=" busy";const el=r.t0?Math.round((Date.now()-r.t0)/1000)+"s":"";inner=`<div class="state"><div><b>${r.status==="queued"?"In queue":"Generating"}</b>${r.status==="queued"&&r.pos!=null?"Position "+(r.pos+1)+" \u00b7 ":""}${el}${r.reqId?`<br><span title="${esc(r.reqId)}" style="font-size:11px">Request ${esc(r.reqId.slice(0,13))}</span>`:""}</div></div>`}
+  else if(r.status==="error"){cls+=" fail";inner=`<div class="state"><div><b>Failed</b>${esc(r.err||"")}</div></div>`}
+  else if(r.url)inner=mediaHTML(r)+(st.audio&&r.video?`<button class="snd" data-act="snd" data-v="${k}">Sound on</button>`:"");
+  else inner=`<div class="state"><div><b>Not in the sample set</b>Add your fal key to generate it live.</div></div>`;
+  const can=r.status==="done"&&r.url,on=S.picked[id]===r.id;
+  const pick=can?`data-act="pick" data-v="${esc(r.id)}" role="button" tabindex="0" aria-pressed="${on}"`:"";
+  const dl=can?`<button class="dlb" data-act="dl" data-v="${k}" aria-label="Download ${esc(r.name)}">${I.dl}</button>`:"";
+  let foot;
+  if(r.model){const tm=r.status==="done"?(r.secs!=null?fmtDur(r.secs)+(r.sample?" to generate":""):""):r.status==="error"?"":"\u2026";
+    foot=`<div class="cn">${esc(r.name)}</div><div class="lab">${esc(r.lab)}</div><div class="cm tnum"><span title="Generation time">${tm}</span><b title="Cost on fal">${r.cost==null?"usage-based":money(r.cost)}</b></div>`}
+  else{const meta=r.sample?(r.url?"Sample":"Live only"):r.status==="done"?(r.secs!=null?r.secs.toFixed(1)+"s":""):r.status==="error"?"":"\u2026";
+    foot=`<div class="cn">${esc(r.name)}</div><div class="cm tnum"><span>${meta}</span><span>${r.sample||r.cost==null?"":money(r.cost)}</span></div>`}
+  return `<div class="${cls}${on?" on":""}" id="c-${id}-${k}" ${pick}><div class="im" style="--ar:${r.ar||"1/1"}">${inner}<span class="ck">${I.ck}</span>${dl}</div>${foot}</div>`;
+}
+function updateCard(id,k){if(S.step!==id||S.gallery||S.view!=="preview")return;const el=document.getElementById("c-"+id+"-"+k);const r=S.results[id]&&S.results[id][k];if(el&&r)el.outerHTML=cardHTML(id,r,k)}
+function apiCode(st){
+  const {jobs}=jobsFor(st);if(!jobs.length)return "Pick at least one option to see the request.";
+  const short=v=>typeof v==="string"&&/^data:/.test(v)?"https://.../your-upload.jpg":v;
+  const clean=o=>Array.isArray(o)?o.map(clean):o&&typeof o==="object"?Object.fromEntries(Object.entries(o).map(([k,v])=>[k,clean(v)])):short(o);
+  const j=jobs[0],body=JSON.stringify(clean(j.input),null,2).replace(/\n/g,"\n  ");
+  const out=j.m3d?"const glbUrl = (result.data.model_glb || result.data.model_mesh).url;":j.video?"const videoUrl = result.data.video.url;":"const imageUrl = result.data.images[0].url;";
+  return `import { fal } from "@fal-ai/client";\n\nfal.config({ credentials: process.env.FAL_KEY });\n\nconst result = await fal.subscribe("${j.endpoint}", {\n  input: ${body}\n});\n\n${out}\n\n// ${S.cmp===st.id?`Compare mode sends the same request to ${jobs.length} models in parallel:\n// ${jobs.map(x=>x.endpoint).join(", ")}\n// Each model family takes its own input fields; switching is one line.`:`This step sends ${jobs.length} request${jobs.length===1?"":"s"} like this one in parallel.`}`;
+}
+function nextOf(st){if(st.group!=="pipe")return null;const i=PIPE.indexOf(st);return PIPE[i+1]||null}
+function renderResult(){
+  const st=cur(),id=st.id,r=S.results[id],running=!!S.running[id];
+  let badge='<span class="badge">Idle</span>';
+  if(running)badge='<span class="badge run">Running</span>';
+  else if(r&&r.length){if(r[0].sample)badge='<span class="badge">Sample</span>';else if(r.some(x=>x.status==="error"))badge='<span class="badge err">'+(r.every(x=>x.status==="error")?"Failed":"Partly failed")+'</span>';else badge='<span class="badge ok">Completed</span>'}
+  let body;
+  if(S.view==="api")body=`<div class="codebar"><span class="est">The same call your team would make with <b>@fal-ai/client</b></span><button class="btn sm" data-act="copy">Copy</button></div><pre class="code" id="code">${esc(apiCode(st))}</pre>`;
+  else if(!r)body=`<div class="empty"><div><b>Results land here as a batch</b>Set your inputs, then press ${liveMode()?"Run":"Show samples"}.</div></div>`;
+  else{
+    const fb=fallbackOf(st),keyBtn=!S.key?`<button data-act="key">Add fal key</button>`:"";
+    let note=running&&S.busy[id]&&fb&&S.cmp!==id?`<div class="note"><span>fal's queue for ${esc(epOf(st).label)} is very busy right now (position ${S.busy[id].toLocaleString()}). Switch this batch to ${esc(fb.label)}?</span><button data-act="fallback">Switch and rerun</button></div>`:"";
+    if(!note&&r[0]&&r[0].model){
+      if(r[0].sample)note=`<div class="note"><span>${r.some(x=>x.url)?"Pre-generated on fal from "+esc(CMP[id].what)+". Times are measured generation times; prices are fal list prices. Pick a card to use that model for this step.":"Compare samples cover "+esc(CMP[id].what)+". Add your fal key to compare any option live."}</span>${keyBtn}</div>`;
+      else if(!running)note=`<div class="note"><span>Pick a card to use that model for this step.</span></div>`;
+    }
+    if(!note&&r[0]&&r[0].sample){
+      const mk=st.models[0];const ce=epOf(st);
+      if(S.key&&SANDBOXED)note=`<div class="note"><span>${SANDBOXMSG}</span></div>`;
+      else if(ce.key!==mk&&!S.key)note=`<div class="note"><span>These samples were made with ${MDL[mk].name}. ${CMP[id]?`Turn on Compare models to see ${esc(ce.name)} side by side, or add`:"Add"} your fal key to run ${esc(ce.name)} live.</span>${keyBtn}</div>`;
+      else if(!S.key)note=`<div class="note"><span>These are pre-generated samples. Add your fal key to run this step live on your own inputs.</span>${keyBtn}</div>`;
+    }
+    body=(note||"")+`<div class="grid ${st.kind!=="image"||id==="ooh"?"wide":""}">${r.map((x,k)=>cardHTML(id,x,k)).join("")}</div>`;
+  }
+  if(S.view!=="api")body+=cmpHTML(st);
+  const done=r?r.filter(x=>x.status==="done"&&x.url):[];
+  let meta="";const u=unitWord(st);
+  if(r&&r.length){
+    if(r[0].model&&r[0].sample)meta=`${r.length} models compared, from samples`;
+    else if(r[0].sample)meta=`${done.length} sample ${u}${done.length===1?"":"s"}`;
+    else if(running)meta=`${r.filter(x=>x.status==="done").length} of ${r.length} done`;
+    else{const cost=r.filter(x=>x.status==="done").reduce((a,x)=>a+(x.cost||0),0);const b=S.batch[id];meta=`${done.length} ${u}${done.length===1?"":"s"}${b?" in "+fmtDur(b.secs)+", run in parallel":""} \u00b7 ${money(cost)}`}
+  }
+  const picked=S.picked[id]!==undefined,nx=nextOf(st);
+  let nav;
+  if(st.group==="more")nav=`<button class="btn" data-act="gallery">${I.back}All use cases</button>`;
+  else if(nx){const uses=nx.prev===id;nav=`<button class="btn ${!uses||picked?"primary":""}" data-act="next" ${uses&&!picked?'disabled title="Pick a result first"':""}>${uses?"Use in":"Next:"} ${esc(nx.tab)} ${I.ar}</button>`}
+  else nav=`<button class="btn ${done.length?"primary":""}" data-act="showboard" ${STEPS.some(x=>(S.results[x.id]||[]).some(y=>y.url))?"":"disabled"}>View campaign board ${I.ar}</button>`;
+  $("#resultPanel").innerHTML=`
+    <div class="phead"><h2>Result ${badge}</h2>
+      <div class="seg" role="group" aria-label="View"><button data-act="view" data-v="preview" aria-pressed="${S.view==="preview"}">Preview</button><button data-act="view" data-v="api" aria-pressed="${S.view==="api"}">API</button></div></div>
+    <div class="rbody">${body}</div>
+    <div class="rfoot"><span class="est tnum">${meta||"Nothing generated yet"}</span>
+      <span class="acts">${running?`<button class="btn" data-act="cancel">Cancel</button>`:""}${done.length?`<button class="btn" data-act="dlall">${I.dl}Download all</button>`:""}${nav}</span></div>`;
+}
+function cmpHTML(st){
+  const t=TR[st.id],r=S.results[st.id],u=unitWord(st);
+  let main,sub;
+  if(r&&r.length&&!r[0].sample&&!S.running[st.id]){const d=r.filter(x=>x.status==="done");const c=d.reduce((a,x)=>a+(x.cost||0),0);const b=S.batch[st.id];main=money(c);sub=`${d.length} ${u}${d.length===1?"":"s"}${b?" in "+fmtDur(b.secs):""}, run in parallel`}
+  else{const js=jobsFor(st).jobs;const tot=js.reduce((a,j)=>a+(j.cost||0),0);main=js.some(j=>j.cost==null)?"Usage-based":"About "+money(tot);sub=st.kind==="video"?"Clips render in parallel":st.kind==="3d"?"Minutes, not weeks":"The whole batch runs in parallel"}
+  return `<div class="cmp"><div><span class="eyebrow">Today</span><b>${t.today}</b><small>${t.time}</small></div><div class="fal"><span class="eyebrow">With fal</span><b>${main}</b><small>${sub}</small></div></div>`;
+}
+const usd=n=>n>=1000?"$"+Math.round(n).toLocaleString("en-US"):money(n);
+
+/* ---------- render: gallery of other use cases ---------- */
+function gthumb(id){const s=SAMP[chain()],first=o=>o?Object.values(o)[0]:null;if(id==="ugc")return s.creators[0].img;if(id==="m3d")return s.glb.hun.poster;return first(s.steps[id])}
+function renderGallery(){
+  const g=$("#gallery"),w=$("#work");g.hidden=!S.gallery;w.hidden=S.gallery;
+  if(!S.gallery){g.innerHTML="";return}
+  g.innerHTML=`<div class="galhead"><div><div class="eyebrow">More use cases</div><h2>Beyond the core pipeline</h2><p>Each one is a single step you can try on its own. Most pick up where the pipeline left off, so your flavor or campaign scene carries straight in.</p></div></div>
+  <div class="ggrid">${MORE.map(st=>`<button class="gcard" data-act="tab" data-v="${st.id}"><span class="gi"><img src="${gthumb(st.id)}" alt="" loading="lazy" style="object-position:50% 35%"></span><span class="gb"><h3>${esc(st.tab)}</h3><p>${esc(st.desc)}</p><span class="gm"><span>${st.prev?"Uses your "+esc(ST[st.prev].tab)+" pick":"Standalone"}</span><b>Try it ${I.ar}</b></span></span></button>`).join("")}</div>`;
+}
+
+/* ---------- render: picks, board, business case ---------- */
+function renderPicks(){
+  const items=PIPE.map(st=>{const u=pickedUrl(st.id);const r=pickedRes(st.id);
+    if(u&&r&&!r.video)return `<div class="pk"><img src="${u}" alt=""><span><b>${st.tab}</b>${esc(r.name)}</span></div>`;
+    if(u&&r)return `<div class="pk"><img src="${r.poster||""}" alt=""><span><b>${st.tab}</b>${esc(r.name)}</span></div>`;
+    return `<div class="pk slot"><i></i><span><b>${st.tab}</b>Not picked</span></div>`}).join("");
+  const any=PIPE.some(st=>pickedUrl(st.id));
+  $("#picks").innerHTML=`<span class="eyebrow" style="margin-right:4px">Your picks</span>${items}<span class="spacer"></span><button class="btn" data-act="dlpicks" ${any?"":"disabled"}>${I.dl}Download picks</button><button class="btn" data-act="showboard" ${STEPS.some(x=>(S.results[x.id]||[]).some(y=>y.url))?"":"disabled"}>View campaign board</button>`;
+}
+function renderBoard(){
+  const el=$("#board");if(!el)return;
+  if(!S.board){el.hidden=true;el.innerHTML="";return}
+  el.hidden=false;
+  const rows=[];let n=0,cost=0,est=0,lo=0,hi=0,steps=0;
+  STEPS.forEach(st=>{
+    const d=(S.results[st.id]||[]).filter(x=>x.status==="done"&&x.url);if(!d.length)return;
+    steps++;n+=d.length;d.forEach(x=>{cost+=x.sample?0:(x.cost||0);est+=x.cost||0});
+    const t=TR[st.id];if(t.per==="once"){lo+=t.lo;hi+=t.hi}else if(t.per==="item"){lo+=t.lo*d.length;hi+=t.hi*d.length}
+    rows.push(`<div class="boardrow"><h3>${esc(st.tab)}<span>${esc(st.title)}</span></h3><div class="bgrid">${d.map(x=>`<div class="bthumb ${S.picked[st.id]===x.id?"on":""}" title="${esc(x.name)}">${x.video?`<video src="${x.url}" ${x.poster?`poster="${x.poster}"`:""} muted loop playsinline autoplay preload="metadata"></video>`:x.m3d?`<img src="${x.poster||base("m3d")}" alt="${esc(x.name)}">`:`<img src="${x.url}" alt="${esc(x.name)}">`}</div>`).join("")}</div></div>`);
+  });
+  const bs=S.boardStats||{},live=!!bs.live&&cost>0;
+  el.innerHTML=`<div class="sechead"><div><div class="eyebrow">Campaign board</div><h2>One sketch, a global campaign</h2></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-act="dlboard">${I.dl}Download all as zip</button><button class="btn ghost" data-act="hideboard">Hide board</button></div></div>
+    <div class="stats tnum">
+      <div><span class="eyebrow">Assets created</span><b>${n}</b><small>Across ${steps} steps</small></div>
+      <div><span class="eyebrow">Time</span><b>${live&&bs.secs?fmtDur(bs.secs):"Minutes"}</b><small>${live?"End to end, each step in parallel":"Typical for a live run"}</small></div>
+      <div><span class="eyebrow">Cost on fal</span><b>${live?money(cost):money(est)}</b><small>${live?"Billed to your fal key":"Estimated for a live run"}</small></div>
+      <div class="hl"><span class="eyebrow">Traditional route</span><b>${lo?usd(lo)+" to "+usd(hi):"Weeks"}</b><small>Plus weeks of agency rounds and shoots</small></div>
+    </div>${rows.join("")}`;
+}
+const SRC_LINKS=[
+ ["ManyPixels, packaging design cost","https://www.manypixels.co/blog/print-design/packaging-design-cost"],
+ ["Contra, SKU adaptations","https://contra.com/s/vFPBoq6r-packaging-sku-adaptations-and-print-ready-prepress"],
+ ["AIM, changing packaging artwork","https://www.aim.be/news/infographic-on-key-facts-changing-packaging-artwork"],
+ ["aytm, shelf test","https://aytm.com/solutions-center/shelf-test"],
+ ["Wonderful Machine, food and drink photography","https://www.wonderfulmachine.com/article/building-estimates-food-drink-product-photography/"],
+ ["Advids, short video cost","https://advids.co/pricing/how-much-short-video-creation-cost"],
+ ["Influee, UGC rates","https://influee.co/blog/ugc-price"],
+ ["FrameSixty, 3D rendering","https://framesixty.com/3d-product-rendering-services/"],
+ ["AdQuick, billboard costs","https://www.adquick.com/answers/what-is-the-average-price-of-a-billboard-ad-in-2025"]
+];
+function renderRoi(){
+  const r=S.roi;
+  $("#roi").innerHTML=`<div class="sechead"><div><div class="eyebrow">Business case</div><h2>What this looks like at your scale</h2></div></div>
+  <div class="roi">
+    <div class="in">
+      <label for="roi-skus">New SKUs per year<input id="roi-skus" type="number" min="1" step="1" value="${r.skus}"></label>
+      <label for="roi-markets">Markets<input id="roi-markets" type="number" min="1" step="1" value="${r.markets}"></label>
+      <label for="roi-images">Lifestyle images per SKU per market<input id="roi-images" type="number" min="0" step="1" value="${r.images}"></label>
+      <label for="roi-videos">Short videos per SKU per market<input id="roi-videos" type="number" min="0" step="1" value="${r.videos}"></label>
+    </div>
+    <div class="out" id="roiOut"></div>
+  </div>`;
+  updateRoi();
+}
+function updateRoi(){
+  const r=S.roi,el=$("#roiOut");if(!el)return;
+  const k=v=>Math.max(0,Math.floor(+v||0));
+  const sk=k(r.skus),mk=k(r.markets),im=k(r.images),vd=k(r.videos);
+  const packs=sk,loc=sk*mk,imgs=sk*mk*im,vids=sk*mk*vd,assets=packs+loc+imgs+vids;
+  const fal=(packs+loc+imgs)*0.045+vids*0.18,fast=(packs+loc+imgs)*0.022+vids*0.09;
+  const lo=packs*600+loc*450+imgs*300+vids*500,hi=packs*1500+loc*1500+imgs*800+vids*5000;
+  const mult=fal>0?Math.round(lo/fal):0;
+  el.innerHTML=`<div class="big tnum">
+      <div><span class="eyebrow">Assets per year</span><b>${assets.toLocaleString("en-US")}</b></div>
+      <div class="fal"><span class="eyebrow">With fal</span><b>${usd(fal)}</b><small class="est">${usd(fast)} on the fastest models</small></div>
+      <div><span class="eyebrow">Today</span><b>${lo?usd(lo)+" to "+usd(hi):"$0"}</b></div>
+    </div>
+    <p style="margin:0;font-size:14px;color:var(--ink-2);max-width:60ch">${mult>1?`That is at least <b>${mult.toLocaleString("en-US")}x</b> less than the traditional route, with assets ready in hours instead of weeks.`:"Adjust the numbers to match a typical year."}</p>
+    <p class="fine">Today figures are estimates built from public pricing pages, not quotes: variant and SKU artwork $600 to $1,500 per SKU; market adaptations $450 to $1,500 each (full EU artwork changes run over \u20ac5,000 per SKU); lifestyle photography $3,000 to $8,000 per shoot day, assuming about 10 finished images per day ($300 to $800 each); short-form video $500 to $5,000 each. fal costs assume Nano Banana 2.1 at about $0.045 per image and 6 second H3 Max clips at $0.18 (FLUX.2 [klein] and H3 Max Turbo for the fastest figure).</p>
+    <p class="fine">Sources: ${SRC_LINKS.map(([t,u])=>`<a href="${u}" target="_blank" rel="noopener">${esc(t)}</a>`).join(" \u00b7 ")}</p>`;
+}
+function render(){renderTop();renderTabs();renderGallery();if(!S.gallery){renderInput();renderResult()}renderPicks();renderBoard()}
+
+/* ---------- modal + toast ---------- */
+let toastT;
+function toast(m){let t=$(".toast");if(!t){t=document.createElement("div");t.className="toast";t.setAttribute("role","status");document.body.appendChild(t)}t.textContent=m;clearTimeout(toastT);toastT=setTimeout(()=>t.remove(),3200)}
+function keyModal(){
+  const has=!!S.key,mask=has?S.key.slice(0,4)+"\u2026"+S.key.slice(-4):"";
+  $("#modalRoot").innerHTML=`<div class="scrim" data-act="close"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="kmT">
+    <h2 id="kmT">${has?"Your fal key":"Connect your fal key"}</h2>
+    <p>Runs bill to your own fal account. Create a key in the <a href="https://fal.ai/dashboard/keys" target="_blank" rel="noopener">fal dashboard</a> under API keys.</p>
+    ${has?`<p class="tnum">Connected key: <b>${esc(mask)}</b></p>`:""}
+    <div class="ctl"><label for="keyIn">${has?"Replace key":"API key"}</label><input id="keyIn" type="password" autocomplete="off" spellcheck="false" placeholder="key_id:key_secret"></div>
+    <div class="err" id="keyErr"></div>
+    ${SANDBOXED?`<p class="fine" style="border-left-color:var(--accent)">${SANDBOXMSG}</p>`:""}<p class="fine">Your key stays in this browser and is sent only to fal with your own requests. Nothing is stored on a server.</p>
+    <div class="row">${has?`<button class="btn ghost" data-act="rmkey">Remove key</button>`:""}<button class="btn" data-act="close">Cancel</button><button class="btn primary" data-act="savekey">${has?"Save":"Connect"}</button></div>
+  </div></div>`;
+  setTimeout(()=>{const k=$("#keyIn");k&&k.focus()},0);
+}
+
+/* ---------- events ---------- */
+function goStep(id){if(S.cmp!=null&&S.cmp!==id)cmpOff();S.step=id;S.gallery=false;S.view="preview";
+  const st=ST[id];if(!S.results[id]&&!S.running[id]&&!liveMode()&&st.group==="more"){if(st.prev&&canCarry(st))S.src[id]="carry";S.results[id]=buildJobs(st).jobs.map(j=>Object.assign({},j,{url:j.demo,status:"done",sample:true,secs:j.sampleSecs}))}
+  render()}
+const scrollWork=()=>{const w=S.gallery?$("#gallery"):$("#work");w&&w.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"})};
+document.addEventListener("click",e=>{
+  const el=e.target.closest("[data-act]");if(!el)return;
+  const a=el.dataset.act,v=el.dataset.v,st=cur(),id=st.id;
+  if(a==="close"){if(e.target===el||el.tagName==="BUTTON")$("#modalRoot").innerHTML="";return}
+  switch(a){
+    case "tab":goStep(v);if(el.classList.contains("gcard"))scrollWork();break;
+    case "gallery":cmpOff();S.gallery=true;render();break;
+    case "compare":if(!canCompare(st)||S.pipe)break;if(S.cmp===id)cmpOff();else cmpOn(st);renderInput();renderPipe();if(S.view==="api")renderResult();break;
+    case "pipeline":runPipeline();break;
+    case "showboard":S.board=true;renderBoard();{const b=$("#board");b&&b.scrollIntoView&&b.scrollIntoView({behavior:"smooth",block:"start"})}break;
+    case "hideboard":S.board=false;renderBoard();break;
+    case "dlboard":downloadZip();break;
+    case "vdur":S.vdur=+v;renderInput();renderPipe();break;
+    case "abfmt":S.abfmt=v;renderInput();break;
+    case "opt":pickOpt(st,v);renderInput();renderPipe();break;
+    case "src":if(v==="upload"&&srcKind(st)==="upload")openUpload(id);else S.src[id]=v;renderInput();renderPipe();if(S.view==="api")renderResult();break;
+    case "upload":openUpload(v);break;
+    case "addcustom":{const inp=$("#custom-in");const txt=(inp&&inp.value||"").trim();if(!txt){toast("Type something first.");break}
+      const nid="c"+Date.now().toString(36);const name=txt.length>34?txt.slice(0,32)+"\u2026":txt;
+      const o={id:nid,name};if(id==="personal"||id==="ab")o.name=txt;else if(id==="ugc")o.desc=txt;else o.desc=txt+(id==="video"&&!/[.!?]$/.test(txt)?".":"");
+      S.extra[id].push(o);pickOpt(st,nid);renderInput();renderPipe();break}
+    case "track":S.track=v;S.ep={};renderTop();if(!S.gallery)renderInput();renderPipe();if(S.view==="api"&&!S.gallery)renderResult();break;
+    case "key":keyModal();break;
+    case "savekey":{const k=$("#keyIn").value.trim();if(!k){$("#keyErr").textContent="Paste your fal API key first.";return}if(!k.includes(":")){$("#keyErr").textContent="fal keys look like key_id:key_secret. Check you copied the whole key.";return}
+      S.key=k;LS.set("fal_key",k);$("#modalRoot").innerHTML="";render();toast("fal key connected. Runs are live now.");break}
+    case "rmkey":S.key=null;LS.set("fal_key",null);$("#modalRoot").innerHTML="";render();toast("Key removed. Back to sample mode.");break;
+    case "resetprompt":delete S.prompt[id];renderInput();break;
+    case "run":run(st);break;
+    case "fallback":{const fb=fallbackOf(st);if(!fb)break;S.cancel[id]=true;S.ep[id]=fb.key;toast("Switching to "+fb.label+".");(async()=>{for(let k=0;k<40&&S.running[id];k++)await sleep(250);S.running[id]=false;run(st)})();break}
+    case "cancel":S.cancel[id]=true;toast("Cancelling. Requests already running may still finish.");break;
+    case "view":S.view=v;renderResult();break;
+    case "copy":{const t=$("#code").textContent;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast("Copied"),()=>{const rg=document.createRange();rg.selectNodeContents($("#code"));const s=getSelection();s.removeAllRanges();s.addRange(rg);toast("Selected. Press Cmd+C to copy.")});break}
+    case "pick":{if(e.target.closest("model-viewer"))break;S.picked[id]=v;const pr=pickedRes(id);if(pr&&pr.model&&epOf(st).key!==pr.model){S.ep[id]=pr.model;toast(pr.name+" is now the model for this step.");renderInput();renderPipe()}renderTabs();renderResult();renderPicks();if(S.board)renderBoard();break}
+    case "snd":{e.stopPropagation();const vd=el.parentElement.querySelector("video");if(vd){vd.muted=!vd.muted;if(!vd.muted){vd.currentTime=0;vd.play().catch(()=>{})}el.textContent=vd.muted?"Sound on":"Mute"}break}
+    case "dl":{e.stopPropagation();const r=S.results[id][+v];download(r.url,`fal-${slug(st.tab)}-${slug(r.name)}.${extOf(r.url)}`);break}
+    case "dlall":{const rs=(S.results[id]||[]).filter(x=>x.url&&x.status==="done");(async()=>{for(const r of rs){await download(r.url,`fal-${slug(st.tab)}-${slug(r.name)}.${extOf(r.url)}`);await sleep(400)}})();break}
+    case "dlpicks":(async()=>{for(const p of PIPE){const u=pickedUrl(p.id);if(u){await download(u,`fal-${slug(p.tab)}-pick.${extOf(u)}`);await sleep(400)}}})();break;
+    case "next":{const nx=nextOf(st);if(!nx)break;if(nx.prev===id&&S.picked[id]===undefined)return;cmpOff();S.step=nx.id;S.view="preview";
+      if(canCarry(nx))S.src[nx.id]="carry";render();scrollWork();break}
+  }
+});
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape")$("#modalRoot").innerHTML="";
+  if(e.key==="Enter"&&e.target.id==="custom-in"){e.preventDefault();const b=document.querySelector('[data-act="addcustom"]');b&&b.click()}
+  if(e.key==="Enter"&&e.target.id==="keyIn"){const b=document.querySelector('[data-act="savekey"]');b&&b.click()}
+  const c=e.target.closest&&e.target.closest('[data-act="pick"]');if(c&&e.target===c&&(e.key==="Enter"||e.key===" ")){e.preventDefault();c.click()}
+});
+function updateEst(){const el=document.getElementById("estLine");if(el)el.innerHTML=estHTML(cur())}
+document.addEventListener("input",e=>{
+  if(e.target.id==="prIn")S.prompt[S.step]=e.target.value;
+  if(e.target.id==="oohIn"){S.text.ooh=e.target.value;updateEst()}
+  if(/^roi-/.test(e.target.id||"")){S.roi[e.target.id.slice(4)]=e.target.value;updateRoi()}
+});
+document.addEventListener("change",e=>{if(e.target.id==="ptypeSel"){S.ptype=e.target.value;S.text.ooh=null;render();return}if(e.target.id==="epSel"){S.ep[S.step]=e.target.value;renderInput();renderPipe();if(S.view==="api")renderResult()}});
+document.addEventListener("toggle",e=>{if(e.target.id==="adv")S.advOpen=e.target.open},true);
+
+/* ---------- brand band pixel art ---------- */
+function drawPix(){
+  const c=$("#pix");if(!c)return;const w=c.clientWidth,h=c.clientHeight;if(!w||!h)return;
+  const d=Math.min(2,window.devicePixelRatio||1);c.width=w*d;c.height=h*d;const x=c.getContext("2d");x.setTransform(d,0,0,d,0,0);x.clearRect(0,0,w,h);
+  let seed=23;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;const cell=9;
+  const blobs=[[w*.6,h*.38,h*.6],[w*.86,h*.14,h*.5],[w*.95,h*.76,h*.55],[w*.72,h*.95,h*.32]];
+  for(let gx=cell/2;gx<w;gx+=cell)for(let gy=cell/2;gy<h;gy+=cell){
+    let v=0;for(const [bx,by,br] of blobs){v=Math.max(v,1-Math.hypot(gx-bx,(gy-by)*1.15)/br)}
+    v+=(rnd()-.5)*.32;if(v<.2)continue;
+    const s=v>.62?3.4:v>.42?3:2.4;x.fillStyle=v>.62?"#A284FF":v>.42?"#5718C0":"#2D2D2F";
+    x.beginPath();x.moveTo(gx,gy-s);x.lineTo(gx+s,gy);x.lineTo(gx,gy+s);x.lineTo(gx-s,gy);x.closePath();x.fill();
+  }
+}
+window.addEventListener("resize",()=>{clearTimeout(drawPix.t);drawPix.t=setTimeout(drawPix,120)});
+
+/* open in a working state: step 1 samples shown, the bold can picked */
+S.results.concept=buildJobs(ST.concept).jobs.map(j=>Object.assign({},j,{url:j.demo,status:"done",sample:true}));
+S.picked.concept="bold";
+render();
+renderRoi();
+requestAnimationFrame(drawPix);
+
+})();
+</script>
+</body>
+</html>
