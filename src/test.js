@@ -70,6 +70,19 @@ let fails=0;const ok=(c,m)=>{if(!c){fails++;console.log('FAIL',m)}else console.l
  // live: upload triggers detection
  S.step='usage';S.src.usage='upload';S.up.usage='data:image/jpeg;base64,BOTTLE';calls.length=0;T.render();await T.run(T.ST.usage);
  ok(calls.some(c=>/openrouter/.test(c.url))&&T.ctxOf(T.ST.usage).cat==='home','upload auto-detected as home care');
+ // review fixes
+ S.gallery=false;S.step='concept';T.render();click('[data-act="gallery"]');
+ ok(d.querySelector('#work').hidden&&!d.querySelector('#gallery').hidden&&/\[hidden\]\{display:none!important\}/.test(html),'gallery replaces the step panels');
+ ok(d.querySelector('#picks').parentElement.hidden,'picks strip hidden in More use cases');
+ click('.gcard[data-v="ooh"]');ok(d.querySelector('.subtab[aria-current="page"]').textContent==='Out-of-home','tile highlights its subtab');
+ // live: More use cases start from the pipeline pick
+ S.picked.variants=S.results.variants[0].id;delete S.src.m3d;S.step='m3d';T.render();ok(T.srcKind(T.ST.m3d)==='carry'&&T.srcUrl(T.ST.m3d)!==T.SAMP.can.base.m3d,'live More use case defaults to your pick');
+ // write-ins
+ S.step='variants';T.render();d.querySelector('#custom-in').value='Watermelon';d.querySelector('#custom-hex').value='#ff5577';click('[data-act="addcustom"]');
+ const wm=T.buildJobs(T.ST.variants).jobs.find(j=>j.name==='Watermelon');ok(wm&&/#FF5577/.test(wm.input.prompt)&&/watermelon illustration/.test(wm.input.prompt),'custom variant with color');
+ S.step='localize';T.render();d.querySelector('#custom-in').value='Nigeria';d.querySelector('#custom-lang').value='English';click('[data-act="addcustom"]');
+ const ng=T.buildJobs(T.ST.localize).jobs.find(j=>j.name==='Nigeria');ok(ng&&/into English/.test(ng.input.prompt)&&/Nigeria/.test(ng.input.prompt),'custom market with language: '+(ng?ng.input.prompt.slice(0,60):''));
+ ok(!/in a supermarket shelf|in an online marketplace/.test(T.buildJobs(T.ST.shelf).jobs.map(j=>j.input.prompt).join(' ')),'shelf prompts read correctly');
  // sandbox
  const d2=mk('x.claudeusercontent.com');await sleep(50);ok(d2.window.document.querySelector('[data-act="compare"]').disabled,'sandbox disables compare');
  console.log(fails?fails+' FAILURES':'ALL PASS');

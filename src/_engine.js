@@ -22,11 +22,11 @@ const NETMSG="Couldn't reach fal from this page. Open the hosted version of CPG 
 /* ---------- prompt templates, editable per step. Words in braces come from the product profile and the option ---------- */
 const TPL={
  concept:"Turn this packaging sketch into a photorealistic product photo of the finished {pack}. Design direction: {direction}. Keep the exact pack shape, proportions and layout from the sketch, and keep the brand name and printed text exactly as written: {copy}. Ignore the handwritten notes, arrows, construction lines and the sketchbook. Front three-quarter view, the pack centered on a pure white background, soft even studio lighting with a gentle contact shadow, crisp printed graphics, realistic materials.",
- variants:"Create the {variant} {word} variant of this exact {product}. Keep the same pack shape, brand name, logo, layout, typography, camera angle and lighting. Recolor the main color blocks to {hex} with harmonizing tones, replace the illustration with {art}, and add the name \"{variant}\" in the same typeface just below the product descriptor. Pure white background, crisp printed graphics.",
- shelf:"Place this exact {product} in {placement}. Every other product in the scene is fictional and plain: no logos, no brand names, no readable text, no real store names. Keep the product's shape, label design, colors and all printed text exactly as in the image, at a realistic size for its surroundings. Photorealistic commercial photography, lighting that suits the setting, sharp focus on the product.",
+ variants:"Create the {variant} {word} variant of this exact {product}. Keep the same pack shape, brand name, logo, layout, typography, camera angle and lighting. Recolor every color block on the pack in shades of {hex}, keeping the logo and type legible, replace the illustration with {art}, and add the name \"{variant}\" in the same typeface just below the product descriptor. Pure white background, crisp printed graphics.",
+ shelf:"Show this exact {product} {placement}. Every other product in the scene is fictional and plain: no logos, no brand names, no readable text, no real store names. Keep the product's shape, label design, colors and all printed text exactly as in the image, at a realistic size for its surroundings. Photorealistic commercial photography, lighting that suits the setting, sharp focus on the product.",
  localize:"Localize this exact {product} for {market}. Keep the brand name and logo exactly as they are. Translate every other word on the pack into {language}, set in a typeface that matches the original style. Keep the pack shape, colors, graphics and illustration the same. Show the pack {setting}, at a realistic size, label facing the camera. Any other products, signs or stores in the scene are generic, with no real logos or brand names. Photorealistic, natural light.",
  audiences:"Create an authentic lifestyle photo for {audience}. This exact {product} appears where it is really used: {usage}. Keep its pack shape, label, colors and text unchanged, label facing the camera, at a realistic size next to people and objects. People, styling and setting feel true to {market}. No other brand logos or readable brand names anywhere in the scene. Natural light, candid editorial photography.",
- video:"{motion} Keep the {product}'s pack, label, colors and text exactly as in the image, at a realistic size. Smooth, realistic motion.",
+ video:"{motion} Keep the product's pack, label, colors and text exactly as in the image, at a realistic size. Smooth, realistic motion.",
  personal:"Personalize this exact {product} for one customer. Replace the {word} name line with the words \"{message}\" set in the same typeface and color, sized to fit. Keep everything else on the pack exactly the same: shape, brand name, logo, colors, illustration, camera angle and lighting. Pure white background.",
  ugc:"The person speaks directly to the camera in a casual, upbeat selfie-video style and says: \"{line}\" Natural hand and head movement, they keep holding the {product} with the label visible. Realistic voice, no background music.",
  usage:"Create a styled product photo: {scene}. This exact {product} appears with its pack shape, label, colors and text unchanged, label facing the camera, at a realistic size. No other brand logos or readable brand names. Editorial photography, natural light.",
@@ -45,7 +45,7 @@ const STEPS=[
   vars:(o,c)=>({pack:c.pack,copy:c.copy,direction:o.desc}),
   sample:(o,c)=>c.preset&&c.match?IMG[c.preset+"_"+o.id]||null:null},
  {id:"variants",group:"pipe",tab:"Variants",title:"Every variant and edition",desc:"Spin flavors, scents and limited editions from one master pack, matched to exact hex values. Logo, layout and type stay locked.",
-  kind:"image",models:IMGM,prev:"concept",baseLabel:"Sample pack",optLabel:c=>CATS[c.cat].vlabel,optHint:"Exact hex values",sq:true,
+  kind:"image",models:IMGM,prev:"concept",baseLabel:"Sample pack",optLabel:c=>CATS[c.cat].vlabel,optHint:"Exact hex values",sq:true,custom:"Name a variant, like Watermelon",customKind:"variant",
   options:c=>CATS[c.cat].variants,defN:5,ar:()=>"1:1",ph:"variant",
   vars:o=>({variant:o.name,hex:o.hex,art:o.art}),sample:smp("variants")},
  {id:"shelf",group:"pipe",tab:"Shelf test",title:"Test it on shelf",desc:"See each variant in the aisle where it will really sell, next to generic competitors, plus a marketplace-ready main image, before anything is printed.",
@@ -53,7 +53,7 @@ const STEPS=[
   options:c=>CATS[c.cat].shelf,defN:5,ar:o=>o.ar,ph:"placement",
   vars:o=>({placement:o.desc}),sample:smp("shelf")},
  {id:"localize",group:"pipe",tab:"Localize",title:"Localize for every market",desc:"Translate the pack copy and show it where it is used in each market. Headline and variant text only: legal and nutrition panels still go through your normal artwork process.",
-  kind:"image",models:IMGM,prev:"variants",baseLabel:"Sample pack",optLabel:()=>"Markets",optHint:"One image each",
+  kind:"image",models:IMGM,prev:"variants",baseLabel:"Sample pack",optLabel:()=>"Markets",optHint:"One image each",custom:"Market, like Nigeria",customKind:"market",
   options:()=>MARKETS,defN:6,ar:()=>"4:5",ph:"market",
   vars:(o,c)=>({market:o.name,language:o.lang,setting:CATS[c.cat].setting(o)}),sample:smp("localize"),meta:o=>({market:o.name})},
  {id:"audiences",group:"pipe",tab:"Audiences",title:"Personalize by audience and moment",desc:"Lifestyle imagery for each audience and occasion, in the places the product is really used, cast and styled for the market you picked.",
@@ -115,7 +115,7 @@ const base=id=>SAMP[chain()].base[id];
 function presetsOf(st){return st.presets?st.presets():null}
 function canCarry(st){if(!st.prev)return false;const c=pickedUrl(st.prev);if(!c)return false;if(liveMode())return true;return c===base(st.id)}
 function srcKind(st){
-  const ps=presetsOf(st),dflt=ps?ps[0].id:"base";let m=S.src[st.id]||dflt;
+  const ps=presetsOf(st),dflt=ps?ps[0].id:"base";let m=S.src[st.id]||(!ps&&canCarry(st)?"carry":dflt);
   if(ps&&m!=="upload"&&m!=="carry"&&!ps.some(p=>p.id===m))m=dflt;
   if(m==="carry"&&!canCarry(st))return dflt;
   if(m==="upload"&&(!S.up[st.id]||!liveMode()))return dflt;

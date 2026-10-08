@@ -109,14 +109,14 @@ const MARKETS=[
  {id:"in",name:"India",lang:"Hindi",city:"Mumbai",drink:"on a street-side kiosk counter in Mumbai"}
 ];
 const NAMES=[{id:"maya",name:"Made for Maya"},{id:"kenji",name:"Made for Kenji"},{id:"sofia",name:"Happy birthday Sofia"},{id:"aarav",name:"Go team Aarav"}];
-const ECOM={id:"ecom",name:"Marketplace main image",ar:"1:1",desc:"an online marketplace main image: the product front-facing and centered on a pure white background, filling about 85 percent of the frame, no props"};
-const ENDCAP={id:"endcap",name:"Endcap display",ar:"3:4",desc:"a supermarket endcap display stacked with cases and packs of this product, the aisle behind softly blurred"};
+const ECOM={id:"ecom",name:"Marketplace main image",ar:"1:1",desc:"as an online marketplace main image: the product front-facing and centered on a pure white background, filling about 85 percent of the frame, no props"};
+const ENDCAP={id:"endcap",name:"Endcap display",ar:"3:4",desc:"on a supermarket endcap display stacked with cases and packs of this product, the aisle behind softly blurred"};
 const shelfSet=aisle=>[
- {id:"shelf",name:"Store shelf",ar:"4:3",desc:`a supermarket ${aisle} at eye level, a neat row of identical packs of this product next to generic competitor products`},
+ {id:"shelf",name:"Store shelf",ar:"4:3",desc:`on a supermarket ${aisle} shelf at eye level, a neat row of identical packs of this product next to generic competitor products`},
  ENDCAP,
- {id:"club",name:"Club store pallet",ar:"4:3",desc:"a warehouse club store pallet stacked with multipacks of this product"},
+ {id:"club",name:"Club store pallet",ar:"4:3",desc:"on a warehouse club store pallet stacked with multipacks of this product"},
  ECOM,
- {id:"hand",name:"Shopper's hand",ar:"4:3",desc:`a shopper's hand taking one pack from a supermarket ${aisle}, seen from the shopper's point of view, aisle softly blurred behind`}
+ {id:"hand",name:"Shopper's hand",ar:"4:3",desc:`in a shopper's hand as they take one pack from a supermarket ${aisle}, seen from the shopper's point of view, aisle softly blurred behind`}
 ];
 const PUSH={id:"push",name:"Slow push-in",desc:"The camera slowly pushes in toward the product while the moment continues naturally around it."};
 const ORBIT={id:"orbit",name:"Cinematic orbit",desc:"The camera slowly orbits, keeping the product in focus in the foreground while the moment continues behind it."};
@@ -124,13 +124,13 @@ const h4=(a,b,c,d)=>[a,b,c,d].map((n,i)=>({id:"h"+(i+1),name:n}));
 
 /* ---------- category profiles: everything downstream of Concept reads from these ---------- */
 const CATS={
- drinks:{name:"Drinks",noun:"drink",word:"flavor",vlabel:"Flavors",where:"in someone's hand or on a table where people are eating or drinking",
+ drinks:{name:"Drinks",noun:"drink",word:"flavor",vlabel:"Flavors",where:"held in someone's hand or set down where it fits naturally in the scene",
   setting:m=>m.drink,
   variants:[{id:"lime",name:"Lime",hex:"#7DBE3C",art:"a lime slice"},{id:"grapefruit",name:"Pink Grapefruit",hex:"#F2706B",art:"a pink grapefruit slice"},{id:"blackberry",name:"Blackberry",hex:"#5B2A6E",art:"a cluster of blackberries"},{id:"mango",name:"Mango",hex:"#FFB000",art:"mango slices"},{id:"cucumber",name:"Cucumber Mint",hex:"#8FD1A8",art:"cucumber slices and mint leaves"},{id:"yuzu",name:"Yuzu",hex:"#E8D44D",art:"a halved yuzu fruit"}],
-  shelf:[{id:"shelf",name:"Store shelf",ar:"4:3",desc:"a supermarket shelf at eye level, a neat row of identical packs of this product next to generic competitor products"},
-   {id:"cooler",name:"Store cooler",ar:"3:4",desc:"a glass-door convenience store cooler, several packs of this product on a middle shelf among plain unlabeled drinks, light reflections on the glass"},
+  shelf:[{id:"shelf",name:"Store shelf",ar:"4:3",desc:"on a supermarket shelf at eye level, a neat row of identical packs of this product next to generic competitor products"},
+   {id:"cooler",name:"Store cooler",ar:"3:4",desc:"in a glass-door convenience store cooler, several packs of this product on a middle shelf among plain unlabeled drinks, light reflections on the glass"},
    ENDCAP,ECOM,
-   {id:"hand",name:"Shopper's hand",ar:"4:3",desc:"a shopper's hand taking one pack from a supermarket shelf, seen from the shopper's point of view, aisle softly blurred behind"}],
+   {id:"hand",name:"Shopper's hand",ar:"4:3",desc:"in a shopper's hand as they take one pack from a supermarket shelf, seen from the shopper's point of view, aisle softly blurred behind"}],
   audiences:[{id:"genz",name:"Gen Z rooftop",desc:"Gen Z friends hanging out on a rooftop at sunset"},{id:"family",name:"Family lunch",desc:"a family sharing a relaxed weekend lunch at home"},{id:"fitness",name:"Post-workout",desc:"a runner cooling down after a morning workout in a city park"},{id:"festive",name:"Celebration",desc:"friends at a festive evening celebration under string lights"},{id:"office",name:"Desk break",desc:"a young professional taking a break at a sunny work desk"}],
   motions:[{id:"push",name:"Slow push-in",desc:"The camera slowly pushes in toward the product on the table while the people keep laughing and talking around it."},{id:"pickup",name:"Pick up and cheers",desc:"A person reaches for the product, picks it up and raises it in a cheers with the group, everyone smiling. Natural, candid motion."},{id:"orbit",name:"Cinematic orbit",desc:"The camera slowly orbits around the table, keeping the product in focus in the foreground while the moment continues behind it."}],
   usage:[{id:"mocktail",name:"Mocktail serve",desc:"the drink poured over ice in a tall glass with fresh garnish, the product beside it on a sunny marble counter"},{id:"brunch",name:"Brunch spread",desc:"a weekend brunch table seen from above, the product among plates of food and coffee"},{id:"flatlay",name:"Ingredient flat lay",desc:"a styled flat lay of the product surrounded by its fresh ingredients on a colored paper backdrop"},{id:"picnic",name:"Picnic cooler",desc:"the product in an ice-filled cooler at a summer picnic, condensation on the pack"}],
@@ -138,7 +138,7 @@ const CATS={
   names:[NAMES[0],{id:"kenji",name:"Kenji's can"},NAMES[2],NAMES[3]],
   headlines:h4("Made to share","Taste the golden hour","Your new favorite fizz","Think pink")},
  food:{name:"Food",noun:"packaged food product",word:"flavor",vlabel:"Flavors",where:"on a kitchen counter or breakfast table, with the food served from it",
-  setting:m=>`on a kitchen counter in a ${m.city} home, set for breakfast with local touches`,
+  setting:m=>`on a kitchen counter in a home in ${m.city}, set for breakfast with local touches`,
   variants:[{id:"strawberry",name:"Strawberry",hex:"#E4475B",art:"fresh strawberries"},{id:"cocoa",name:"Cocoa",hex:"#6B3E26",art:"cocoa pieces"},{id:"blueberry",name:"Blueberry",hex:"#4A5DAE",art:"blueberries"},{id:"maple",name:"Maple",hex:"#C67A2E",art:"a maple leaf and a syrup drizzle"},{id:"cinnamon",name:"Cinnamon",hex:"#B5651D",art:"cinnamon sticks"}],
   shelf:shelfSet("breakfast cereal aisle"),
   audiences:[{id:"family",name:"Family breakfast",desc:"a family having breakfast together before school"},{id:"dorm",name:"Late-night dorm",desc:"college students grabbing a late-night snack in a dorm kitchen"},{id:"fitness",name:"After the run",desc:"a runner refueling with breakfast after a morning run"},{id:"brunch",name:"Weekend brunch",desc:"friends sharing a relaxed weekend brunch at home"},{id:"office",name:"Office pantry",desc:"colleagues in an office pantry on a coffee break"}],
@@ -148,7 +148,7 @@ const CATS={
   names:NAMES,
   headlines:h4("Mornings, sorted","Crunch you can count on","Breakfast, upgraded","Good mornings start here")},
  home:{name:"Home care",noun:"household cleaning product",word:"scent",vlabel:"Scents",where:"in a laundry room or next to a washing machine, never on a dining table or near food",
-  setting:m=>`on a laundry room shelf in a ${m.city} home, next to a washing machine`,
+  setting:m=>`on a laundry room shelf in a home in ${m.city}, next to a washing machine`,
   variants:[{id:"lavender",name:"Lavender",hex:"#9C88C9",art:"lavender sprigs"},{id:"linen",name:"Fresh Linen",hex:"#A9C8E8",art:"a folded white towel"},{id:"citrus",name:"Citrus Burst",hex:"#F6B32B",art:"citrus slices"},{id:"sensitive",name:"Sensitive",hex:"#BFD9CC",art:"a soft feather"},{id:"eucalyptus",name:"Eucalyptus",hex:"#7FB8A4",art:"eucalyptus leaves"}],
   shelf:shelfSet("laundry and cleaning aisle"),
   audiences:[{id:"parents",name:"Busy parents",desc:"a busy parent doing laundry with a pile of kids' clothes"},{id:"firstapt",name:"First apartment",desc:"a young couple setting up the laundry nook in their first apartment"},{id:"eco",name:"Eco-minded home",desc:"an eco-minded household with a minimal, plant-filled laundry room"},{id:"pets",name:"Pet owners",desc:"a pet owner washing their dog's blankets"},{id:"gym",name:"Gym kit wash",desc:"someone washing a pile of sweaty workout clothes"}],
@@ -158,7 +158,7 @@ const CATS={
   names:NAMES,
   headlines:h4("Fresh starts here","Clean you can smell","Laundry day, solved","Softness in every load")},
  personal:{name:"Personal care",noun:"personal care product",word:"scent",vlabel:"Scents",where:"in a bathroom, on a vanity or in a gym bag, never on a dining table or near food",
-  setting:m=>`on a bathroom vanity in a ${m.city} apartment`,
+  setting:m=>`on a bathroom vanity in an apartment in ${m.city}`,
   variants:[{id:"coconut",name:"Coconut",hex:"#F3E6D3",art:"coconut halves"},{id:"aloe",name:"Aloe",hex:"#8CC79A",art:"aloe leaves"},{id:"charcoal",name:"Charcoal",hex:"#3A3A3A",art:"charcoal pieces"},{id:"rose",name:"Rose",hex:"#E7A1B0",art:"rose petals"}],
   shelf:shelfSet("personal care aisle"),
   audiences:[{id:"morning",name:"Morning routine",desc:"someone's morning bathroom routine before work"},{id:"gym",name:"Gym shower",desc:"a post-workout shower in a gym locker room"},{id:"travel",name:"Weekend trip",desc:"packing a toiletry bag for a weekend trip"},{id:"selfcare",name:"Self-care night",desc:"a relaxing evening self-care routine at home"},{id:"teen",name:"School morning",desc:"a teenager getting ready for school"}],

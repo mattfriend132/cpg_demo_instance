@@ -98,7 +98,7 @@ function sourceField(st){
     ${tile("src","base",m==="base",base(st.id),st.baseLabel,{sq:st.sq})}
     ${upTile(st,m==="upload",st.sq)}</div>`);
 }
-function customRow(st){const dis=!liveMode();return `<div class="addrow"><input type="text" id="custom-in" placeholder="${esc(dis?"Add your fal key to write your own":st.custom)}" aria-label="Add your own" maxlength="200" ${dis?"disabled":""}><button class="btn sm" data-act="addcustom" ${dis?"disabled":""}>Add</button></div>`}
+function customRow(st){const dis=!liveMode();const extra=st.customKind==="variant"?`<input type="color" id="custom-hex" value="#5718C0" aria-label="Variant color" title="Variant color" style="width:36px;flex:none;padding:2px;height:34px" ${dis?"disabled":""}>`:st.customKind==="market"?`<input type="text" id="custom-lang" placeholder="Language" aria-label="Language" maxlength="40" style="max-width:120px" ${dis?"disabled":""}>`:"";return `<div class="addrow"><input type="text" id="custom-in" placeholder="${esc(dis?"Add your fal key to write your own":st.custom)}" aria-label="Add your own" maxlength="200" ${dis?"disabled":""}>${extra}<button class="btn sm" data-act="addcustom" ${dis?"disabled":""}>Add</button></div>`}
 function modelField(st){
   const ep=epOf(st),on=S.cmp===st.id,dis=!canCompare(st)||!!S.pipe;
   const sub=on?"One "+unitWord(st)+" from each model":ep.lab+" · "+priceTxt(ep)+" · "+ep.tier;
@@ -308,7 +308,9 @@ function updateRoi(){
     <p class="fine">Today figures are estimates built from public pricing pages, not quotes: variant and SKU artwork $600 to $1,500 per SKU; market adaptations $450 to $1,500 each (full EU artwork changes run over €5,000 per SKU); lifestyle photography $3,000 to $8,000 per shoot day, assuming about 10 finished images per day ($300 to $800 each); short-form video $500 to $5,000 each. fal costs assume Nano Banana 2.1 at about $0.045 per image and 6 second H3 Max clips at $0.18 (FLUX.2 [klein] and H3 Max Turbo for the fastest figure).</p>
     <p class="fine">Sources: ${SRC_LINKS.map(([t,u])=>`<a href="${u}" target="_blank" rel="noopener">${esc(t)}</a>`).join(" · ")}</p>`;
 }
-function render(){renderTop();renderTabs();renderGallery();if(!S.gallery){renderInput();renderResult()}renderPicks();renderBoard()}
+function render(){renderTop();renderTabs();renderGallery();if(!S.gallery){renderInput();renderResult()}renderPicks();renderBoard();
+  /* the other use cases read as their own page: no pipeline picks strip or campaign board there */
+  const more=S.gallery||cur().group==="more";$("#picks").parentElement.hidden=more;if(more)$("#board").hidden=true}
 
 /* ---------- modal + toast ---------- */
 let toastT;
@@ -329,16 +331,18 @@ function keyModal(){
 
 /* ---------- events ---------- */
 function goStep(id){if(S.cmp!=null&&S.cmp!==id)cmpOff();S.step=id;S.gallery=false;S.view="preview";
-  const st=ST[id];if(!S.results[id]&&!S.running[id]&&!liveMode()&&st.group==="more"){if(st.prev&&canCarry(st))S.src[id]="carry";S.results[id]=buildJobs(st).jobs.map(j=>Object.assign({},j,{url:j.demo,status:"done",sample:true,secs:j.sampleSecs}))}
+  const st=ST[id];if(st.prev&&canCarry(st)&&S.src[id]!=="upload")S.src[id]="carry";
+  if(!S.results[id]&&!S.running[id]&&!liveMode()&&st.group==="more"){S.results[id]=buildJobs(st).jobs.map(j=>Object.assign({},j,{url:j.demo,status:"done",sample:true,secs:j.sampleSecs}))}
   render()}
-const scrollWork=()=>{const w=S.gallery?$("#gallery"):$("#work");w&&w.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"})};
+/* keep the step selector in view so the highlighted use case is visible */
+const scrollWork=()=>{const t=$("#tabs");if(!t||!t.getBoundingClientRect)return;const y=t.getBoundingClientRect().top+(window.scrollY||0)-70;if(typeof window.scrollTo==="function")try{window.scrollTo({top:Math.max(0,y),behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"})}catch(e){}};
 document.addEventListener("click",e=>{
   const el=e.target.closest("[data-act]");if(!el)return;
   const a=el.dataset.act,v=el.dataset.v,st=cur(),id=st.id;
   if(a==="close"){if(e.target===el||el.tagName==="BUTTON")$("#modalRoot").innerHTML="";return}
   switch(a){
     case "tab":goStep(v);if(el.classList.contains("gcard"))scrollWork();break;
-    case "gallery":cmpOff();S.gallery=true;render();break;
+    case "gallery":cmpOff();S.gallery=true;render();scrollWork();break;
     case "compare":if(!canCompare(st)||S.pipe)break;if(S.cmp===id)cmpOff();else cmpOn(st);renderInput();renderPipe();if(S.view==="api")renderResult();break;
     case "pipeline":runPipeline();break;
     case "showboard":S.board=true;renderBoard();{const b=$("#board");b&&b.scrollIntoView&&b.scrollIntoView({behavior:"smooth",block:"start"})}break;
@@ -351,7 +355,7 @@ document.addEventListener("click",e=>{
     case "upload":openUpload(v);break;
     case "addcustom":{const inp=$("#custom-in");const txt=(inp&&inp.value||"").trim();if(!txt){toast("Type something first.");break}
       const nid="c"+Date.now().toString(36);const name=txt.length>34?txt.slice(0,32)+"…":txt;
-      const o={id:nid,name};if(id==="personal"||id==="ab")o.name=txt;else if(id==="ugc")o.desc=txt;else o.desc=txt+(id==="video"&&!/[.!?]$/.test(txt)?".":"");
+      const o={id:nid,name};if(st.customKind==="variant"){o.name=txt;o.hex=(($("#custom-hex")||{}).value||"#5718C0").toUpperCase();o.art="a simple "+txt.toLowerCase()+" illustration"}else if(st.customKind==="market"){const lang=(($("#custom-lang")||{}).value||"").trim();if(!lang){toast("Add the language for this market.");break}o.name=txt;o.lang=lang;o.city=txt;o.drink="on a cafe table in "+txt}else if(id==="personal"||id==="ab")o.name=txt;else if(id==="ugc")o.desc=txt;else o.desc=txt+(id==="video"&&!/[.!?]$/.test(txt)?".":"");
       S.extra[id].push(o);pickOpt(st,nid);renderInput();renderPipe();break}
     case "track":S.track=v;S.ep={};renderTop();if(!S.gallery)renderInput();renderPipe();if(S.view==="api"&&!S.gallery)renderResult();break;
     case "key":keyModal();break;
